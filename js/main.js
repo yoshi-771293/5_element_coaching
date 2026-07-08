@@ -46,16 +46,26 @@
      ------------------------------------------------------------------ */
   var toast = document.getElementById('toast');
   var toastTimer = null;
+  function showComingSoon() {
+    if (!toast) return;
+    toast.textContent = 'Coming soon';
+    toast.classList.add('is-visible');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toast.classList.remove('is-visible');
+    }, 2600);
+  }
   document.querySelectorAll('[data-gateway-btn]').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      if (!toast) return;
-      toast.textContent = 'Coming soon';
-      toast.classList.add('is-visible');
-      clearTimeout(toastTimer);
-      toastTimer = setTimeout(function () {
-        toast.classList.remove('is-visible');
-      }, 2600);
-    });
+    btn.addEventListener('click', showComingSoon);
+    // Szenenbilder sind <figure role="button"> — Enter/Space wie ein Button behandeln
+    if (btn.tagName !== 'BUTTON') {
+      btn.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          showComingSoon();
+        }
+      });
+    }
   });
 
   if (prefersReduced || typeof gsap === 'undefined') return;
@@ -345,7 +355,7 @@
       window.__phoenixDust = {
         burst: function () {
           var hasShape = phoenixTargets && phoenixTargets.length >= 90;
-          var burstCount = hasShape ? Math.min(Math.floor(phoenixTargets.length / 3), 520) : 140;
+          var burstCount = hasShape ? Math.min(Math.floor(phoenixTargets.length / 3), 900) : 140;
           var stride = hasShape ? Math.max(1, Math.floor((phoenixTargets.length / 3) / burstCount)) : 1;
 
           var startPositions = new Float32Array(burstCount * 3);
@@ -382,7 +392,7 @@
           var burstGeo = new THREE.BufferGeometry();
           burstGeo.setAttribute('position', new THREE.BufferAttribute(burstPositions, 3));
           var burstMat = new THREE.PointsMaterial({
-            size: hasShape ? 0.13 : 0.22,
+            size: hasShape ? 0.12 : 0.22,
             map: tex,
             transparent: true,
             opacity: 0,
@@ -393,23 +403,65 @@
           var burstPoints = new THREE.Points(burstGeo, burstMat);
           scene3.add(burstPoints);
 
+          // ---- Freie Glutfunken: steigen neben der Silhouette auf und
+          //      verglühen — der "Funkenregen" um die Geburt herum ----
+          var sparkCount = 260;
+          var sparkPositions = new Float32Array(sparkCount * 3);
+          var sparkVel = new Float32Array(sparkCount * 3);
+          var sparkPhase = new Float32Array(sparkCount);
+          for (var s = 0; s < sparkCount; s++) {
+            sparkPositions[s * 3] = (Math.random() - 0.5) * 5.5;
+            sparkPositions[s * 3 + 1] = -4.2 - Math.random() * 2;
+            sparkPositions[s * 3 + 2] = (Math.random() - 0.5) * 3;
+            sparkVel[s * 3] = (Math.random() - 0.5) * 1.6;
+            sparkVel[s * 3 + 1] = 2.6 + Math.random() * 4.4;
+            sparkVel[s * 3 + 2] = (Math.random() - 0.5) * 1.2;
+            sparkPhase[s] = Math.random() * Math.PI * 2;
+          }
+          var sparkGeo = new THREE.BufferGeometry();
+          sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkPositions, 3));
+          var sparkMat = new THREE.PointsMaterial({
+            size: 0.09,
+            map: tex,
+            transparent: true,
+            opacity: 0,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            color: new THREE.Color('#E4B96A')
+          });
+          var sparkPoints = new THREE.Points(sparkGeo, sparkMat);
+          scene3.add(sparkPoints);
+
           var start = null;
-          var duration = hasShape ? 2200 : 1400;
-          var assembleBy = 0.68;  // Anteil der Zeit, bis die Form steht
-          var fadeFrom = 0.86;    // ab hier ausblenden
+          var duration = hasShape ? 2600 : 1400;
+          var assembleBy = 0.62;  // Anteil der Zeit, bis die Form steht
+          var fadeFrom = 0.87;    // ab hier ausblenden
+          var riseAmount = 0.45;  // sanfter Aufstieg der fertigen Silhouette
 
           (function animateBurst(now) {
             if (!start) start = now;
             var elapsed = now - start;
             var t = Math.min(elapsed / duration, 1);
             var formT = easeOutCubic(Math.min(t / assembleBy, 1));
+            var riseT = t > assembleBy ? (t - assembleBy) / (1 - assembleBy) : 0;
+            var rise = riseT * riseAmount;
+
             var pos = burstGeo.attributes.position.array;
             for (var b = 0; b < burstCount; b++) {
               pos[b * 3] = startPositions[b * 3] + (endPositions[b * 3] - startPositions[b * 3]) * formT;
-              pos[b * 3 + 1] = startPositions[b * 3 + 1] + (endPositions[b * 3 + 1] - startPositions[b * 3 + 1]) * formT;
+              pos[b * 3 + 1] = startPositions[b * 3 + 1] + (endPositions[b * 3 + 1] - startPositions[b * 3 + 1]) * formT + rise;
               pos[b * 3 + 2] = startPositions[b * 3 + 2] + (endPositions[b * 3 + 2] - startPositions[b * 3 + 2]) * formT;
             }
             burstGeo.attributes.position.needsUpdate = true;
+
+            var tSec = elapsed / 1000;
+            var spos = sparkGeo.attributes.position.array;
+            for (var s2 = 0; s2 < sparkCount; s2++) {
+              spos[s2 * 3] = sparkPositions[s2 * 3] + sparkVel[s2 * 3] * tSec + Math.sin(tSec * 3 + sparkPhase[s2]) * 0.14;
+              spos[s2 * 3 + 1] = sparkPositions[s2 * 3 + 1] + sparkVel[s2 * 3 + 1] * tSec;
+              spos[s2 * 3 + 2] = sparkPositions[s2 * 3 + 2] + sparkVel[s2 * 3 + 2] * tSec;
+            }
+            sparkGeo.attributes.position.needsUpdate = true;
 
             var op;
             if (t < 0.12) {
@@ -419,7 +471,11 @@
             } else {
               op = 1 - (t - fadeFrom) / (1 - fadeFrom);
             }
-            burstMat.opacity = Math.max(0, Math.min(1, op)) * (hasShape ? 0.95 : 1);
+            op = Math.max(0, Math.min(1, op));
+            burstMat.opacity = op * (hasShape ? 0.95 : 1);
+            // Funken verglühen etwas früher als die Silhouette
+            var sparkOp = t < 0.08 ? t / 0.08 : 1 - easeOutCubic(Math.max(0, (t - 0.08) / 0.8));
+            sparkMat.opacity = Math.max(0, Math.min(1, sparkOp)) * 0.9;
 
             if (t < 1) {
               requestAnimationFrame(animateBurst);
@@ -427,6 +483,9 @@
               scene3.remove(burstPoints);
               burstGeo.dispose();
               burstMat.dispose();
+              scene3.remove(sparkPoints);
+              sparkGeo.dispose();
+              sparkMat.dispose();
             }
           })(performance.now());
         }

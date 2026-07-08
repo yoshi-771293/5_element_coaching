@@ -422,28 +422,26 @@ main { position: relative; z-index: 2; }
 
 .gateway-select {
   display: flex; flex-wrap: wrap; justify-content: center;
-  gap: 1.2rem; margin-top: 0.6rem;
+  gap: clamp(1.2rem, 3vw, 2.4rem); margin-top: 0.6rem;
 }
-.gateway-btn {
-  font-family: var(--font-display);
-  font-size: clamp(0.85rem, 1.2vw, 1rem);
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--pristine);
-  background: transparent;
-  border: 1px solid rgba(244,243,234,0.28);
-  padding: 0.9rem 1.7rem;
+.plaque-btn {
+  background: none; border: none; padding: 0;
   cursor: pointer;
-  transition: background 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+  transition: transform 0.45s ease, filter 0.45s ease;
 }
-.gateway-btn--water { color: var(--water-st); border-color: rgba(127,175,190,0.45); }
-.gateway-btn--water:hover { background: rgba(127,175,190,0.12); border-color: var(--water-st); }
-.gateway-btn--fire { color: var(--fire-st); border-color: rgba(201,139,74,0.45); }
-.gateway-btn--fire:hover { background: rgba(201,139,74,0.12); border-color: var(--fire-st); }
-.gateway-btn--air { color: var(--air-st); border-color: rgba(183,177,190,0.45); }
-.gateway-btn--air:hover { background: rgba(183,177,190,0.12); border-color: var(--air-st); }
-.gateway-btn--earth { color: var(--earth-st); border-color: rgba(168,197,106,0.45); }
-.gateway-btn--earth:hover { background: rgba(168,197,106,0.12); border-color: var(--earth-st); }
+.plaque-btn img {
+  display: block;
+  width: clamp(160px, 15vw, 225px);
+  filter: drop-shadow(0 10px 24px rgba(0,0,0,0.6));
+  transition: filter 0.45s ease;
+}
+.plaque-btn:hover { transform: translateY(-5px); }
+.plaque-btn:hover img { filter: drop-shadow(0 14px 30px rgba(0,0,0,0.7)) drop-shadow(0 0 22px rgba(216,192,106,0.35)); }
+.plaque-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+
+/* Große Gateway-Szenenbilder sind ebenfalls klickbar */
+.gateway__media[data-gateway-btn] { cursor: pointer; }
+.gateway__media[data-gateway-btn]:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
 
 /* ---------- Toast ---------- */
 .toast {
@@ -767,10 +765,22 @@ button.btn { appearance: none; -webkit-appearance: none; background: transparent
 .intro__skip:hover, .intro__skip:focus-visible { opacity: 1; }
 .intro__skip:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
-/* ---------- Sand-video scene (before Rise of the Phoenix) ---------- */
-.scene--sand { min-height: 100vh; min-height: 100svh; overflow: hidden; }
-.scene--sand video {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;
+/* ---------- Sand-video scene (before Rise of the Phoenix) ----------
+   Bewusst verkleinert und im Ganzen sichtbar (kein object-fit: cover),
+   damit der "Rise of the Phoenix"-Schriftzug im Video nicht oben
+   abgeschnitten wird. */
+.scene--sand {
+  background: var(--ink);
+  padding: clamp(5rem, 12vh, 8rem) 4vw;
+  display: flex; justify-content: center;
 }
+.scene--sand video {
+  display: block;
+  width: min(1080px, 90vw);
+  aspect-ratio: 16 / 9;
+  height: auto;
+  object-fit: contain;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.55);
+}
+.scene--sand .scene__veil,
+.scene--sand .scene__fade { display: none; }

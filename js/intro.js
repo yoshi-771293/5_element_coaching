@@ -50,23 +50,32 @@
     }, 850);
   }
 
+  var revealed = false;
+
   function reveal() {
-    if (finished) return;
+    if (finished || revealed) return;
+    revealed = true;
+    // Burst startet, während die Flamme im Video noch sichtbar erlischt —
+    // der Phönix wird aus der sterbenden Flamme geboren.
     if (window.__phoenixDust && window.__phoenixDust.burst) {
       window.__phoenixDust.burst();
     }
-    if (video) video.classList.add('is-hidden');
-    // Das scharfe Logo blendet erst ein, nachdem sich die Partikel zur
-    // Phoenix-Silhouette geformt haben (siehe burst()-Timing in main.js).
+    // Video läuft weiter und blendet erst verzögert aus, damit Funken und
+    // Silhouette über der grau werdenden Flamme erscheinen.
+    setTimeout(function () {
+      if (video) video.classList.add('is-hidden');
+    }, 900);
+    // Das scharfe Logo blendet ein, sobald die Silhouette steht
+    // (siehe burst()-Timing in main.js: Form steht nach ~1,6s).
     setTimeout(function () {
       if (logo) logo.classList.add('is-visible');
-    }, 1450);
-    setTimeout(finish, 2900);
+    }, 1600);
+    setTimeout(finish, 3300);
   }
 
   if (video) {
     video.addEventListener('timeupdate', function () {
-      if (video.duration && video.currentTime >= video.duration - 0.4) {
+      if (video.duration && video.currentTime >= video.duration - 1.8) {
         reveal();
       }
     });
@@ -85,5 +94,5 @@
   }
 
   // Safety net: never trap a visitor behind the intro.
-  setTimeout(finish, 4000 + 2900);
+  setTimeout(finish, 4300 + 3300);
 })();
