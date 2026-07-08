@@ -253,29 +253,85 @@
       var points = new THREE.Points(geo, mat);
       scene3.add(points);
 
+      // ---- Phoenix-Silhouette aus dem echten Logo sampeln ----
+      // Damit der Ember-Burst nicht nur wahllos auseinanderfliegt, sondern
+      // sich sichtbar zu einem Phoenix formt, bevor das scharfe PNG-Logo
+      // darüber einblendet.
+      var phoenixTargets = null;
+      (function preparePhoenixSilhouette() {
+        var img = new Image();
+        img.onload = function () {
+          var cw = 110;
+          var ch = Math.round(cw * img.naturalHeight / img.naturalWidth);
+          var sampleCanvas = document.createElement('canvas');
+          sampleCanvas.width = cw;
+          sampleCanvas.height = ch;
+          var sctx = sampleCanvas.getContext('2d');
+          sctx.drawImage(img, 0, 0, cw, ch);
+          var data = sctx.getImageData(0, 0, cw, ch).data;
+          var pts = [];
+          for (var y = 0; y < ch; y += 2) {
+            for (var x = 0; x < cw; x += 2) {
+              if (data[(y * cw + x) * 4 + 3] > 120) {
+                pts.push(
+                  (x / cw - 0.5) * 7.4,
+                  (0.5 - y / ch) * 7.4 + 0.9,
+                  (Math.random() - 0.5) * 0.5
+                );
+              }
+            }
+          }
+          phoenixTargets = pts;
+        };
+        img.src = 'assets/img/phoenix-gold.png';
+      })();
+
+      function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
+
       window.__phoenixDust = {
         burst: function () {
-          var burstCount = 140;
+          var hasShape = phoenixTargets && phoenixTargets.length >= 90;
+          var burstCount = hasShape ? Math.min(Math.floor(phoenixTargets.length / 3), 520) : 140;
+          var stride = hasShape ? Math.max(1, Math.floor((phoenixTargets.length / 3) / burstCount)) : 1;
+
+          var startPositions = new Float32Array(burstCount * 3);
+          var endPositions = new Float32Array(burstCount * 3);
           var burstPositions = new Float32Array(burstCount * 3);
-          var burstVelocities = new Float32Array(burstCount * 3);
+
           for (var b = 0; b < burstCount; b++) {
-            burstPositions[b * 3] = 0;
-            burstPositions[b * 3 + 1] = 0;
-            burstPositions[b * 3 + 2] = 0;
+            // Startpunkt: lose Asche/Glut, die von unten aufsteigt
             var angle = Math.random() * Math.PI * 2;
-            var spread = Math.random() * Math.PI - Math.PI / 2;
-            var speed = 2.5 + Math.random() * 4;
-            burstVelocities[b * 3] = Math.cos(angle) * Math.cos(spread) * speed;
-            burstVelocities[b * 3 + 1] = Math.sin(spread) * speed + 1.5;
-            burstVelocities[b * 3 + 2] = Math.sin(angle) * Math.cos(spread) * speed;
+            var radius = 1.2 + Math.random() * 3.5;
+            startPositions[b * 3] = Math.cos(angle) * radius;
+            startPositions[b * 3 + 1] = -3.5 - Math.random() * 2.5;
+            startPositions[b * 3 + 2] = (Math.random() - 0.5) * 2.5;
+
+            if (hasShape) {
+              var si = (b * stride) * 3;
+              endPositions[b * 3] = phoenixTargets[si];
+              endPositions[b * 3 + 1] = phoenixTargets[si + 1];
+              endPositions[b * 3 + 2] = phoenixTargets[si + 2];
+            } else {
+              // Fallback, falls das Logo-Bild noch nicht geladen ist: klassischer Funkenburst
+              var a2 = Math.random() * Math.PI * 2;
+              var sp = Math.random() * Math.PI - Math.PI / 2;
+              var d = 2.5 + Math.random() * 4;
+              endPositions[b * 3] = Math.cos(a2) * Math.cos(sp) * d;
+              endPositions[b * 3 + 1] = Math.sin(sp) * d + 1.5;
+              endPositions[b * 3 + 2] = Math.sin(a2) * Math.cos(sp) * d;
+            }
+            burstPositions[b * 3] = startPositions[b * 3];
+            burstPositions[b * 3 + 1] = startPositions[b * 3 + 1];
+            burstPositions[b * 3 + 2] = startPositions[b * 3 + 2];
           }
+
           var burstGeo = new THREE.BufferGeometry();
           burstGeo.setAttribute('position', new THREE.BufferAttribute(burstPositions, 3));
           var burstMat = new THREE.PointsMaterial({
-            size: 0.22,
+            size: hasShape ? 0.13 : 0.22,
             map: tex,
             transparent: true,
-            opacity: 1,
+            opacity: 0,
             depthWrite: false,
             blending: THREE.AdditiveBlending,
             color: new THREE.Color('#D8C06A')
@@ -284,19 +340,33 @@
           scene3.add(burstPoints);
 
           var start = null;
-          var duration = 1800;
+          var duration = hasShape ? 2200 : 1400;
+          var assembleBy = 0.68;  // Anteil der Zeit, bis die Form steht
+          var fadeFrom = 0.86;    // ab hier ausblenden
+
           (function animateBurst(now) {
             if (!start) start = now;
             var elapsed = now - start;
             var t = Math.min(elapsed / duration, 1);
+            var formT = easeOutCubic(Math.min(t / assembleBy, 1));
             var pos = burstGeo.attributes.position.array;
             for (var b = 0; b < burstCount; b++) {
-              pos[b * 3] = burstVelocities[b * 3] * t;
-              pos[b * 3 + 1] = burstVelocities[b * 3 + 1] * t - 2 * t * t;
-              pos[b * 3 + 2] = burstVelocities[b * 3 + 2] * t;
+              pos[b * 3] = startPositions[b * 3] + (endPositions[b * 3] - startPositions[b * 3]) * formT;
+              pos[b * 3 + 1] = startPositions[b * 3 + 1] + (endPositions[b * 3 + 1] - startPositions[b * 3 + 1]) * formT;
+              pos[b * 3 + 2] = startPositions[b * 3 + 2] + (endPositions[b * 3 + 2] - startPositions[b * 3 + 2]) * formT;
             }
             burstGeo.attributes.position.needsUpdate = true;
-            burstMat.opacity = 1 - t;
+
+            var op;
+            if (t < 0.12) {
+              op = t / 0.12;
+            } else if (t < fadeFrom) {
+              op = 1;
+            } else {
+              op = 1 - (t - fadeFrom) / (1 - fadeFrom);
+            }
+            burstMat.opacity = Math.max(0, Math.min(1, op)) * (hasShape ? 0.95 : 1);
+
             if (t < 1) {
               requestAnimationFrame(animateBurst);
             } else {
