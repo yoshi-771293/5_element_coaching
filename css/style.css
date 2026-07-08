@@ -674,3 +674,52 @@ button.btn { appearance: none; -webkit-appearance: none; background: transparent
   outline: 2px solid var(--gold);
   outline-offset: 6px;
 }
+
+/* ---------- Opening sequence (flame -> ember burst -> emblem) ---------- */
+.intro {
+  position: fixed; inset: 0; z-index: 200;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.intro.intro--done { display: none; }
+.intro__video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: opacity 1s ease;
+}
+.intro__video.is-hidden { opacity: 0; }
+.intro__logo {
+  position: relative; z-index: 2;
+  width: clamp(160px, 22vw, 280px);
+  opacity: 0;
+  filter: drop-shadow(0 0 40px rgba(216, 192, 106, 0.4));
+  transition: opacity 1.4s ease;
+}
+.intro__logo.is-visible { opacity: 1; }
+.intro.is-leaving { opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
+.intro__skip {
+  position: absolute; bottom: 2rem; right: 2rem; z-index: 3;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--pristine);
+  background: transparent;
+  border: 1px solid rgba(244, 243, 234, 0.35);
+  padding: 0.7rem 1.4rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+.intro__skip:hover, .intro__skip:focus-visible { opacity: 1; }
+.intro__skip:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+/* ---------- Sand-video scene (before Rise of the Phoenix) ---------- */
+.scene--sand { min-height: 100vh; min-height: 100svh; overflow: hidden; }
+.scene--sand video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
