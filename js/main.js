@@ -10,6 +10,24 @@
   if (prefersReduced) document.documentElement.classList.add('reduced-motion');
 
   /* ------------------------------------------------------------------
+     Lazy-loaded scene videos — independent of reduced-motion/GSAP so
+     these scenes never end up permanently blank
+     ------------------------------------------------------------------ */
+  document.querySelectorAll('video[data-lazy-video]').forEach(function (video) {
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          video.src = video.dataset.lazyVideo;
+          video.load();
+          video.play().catch(function () {});
+          observer.disconnect();
+        }
+      });
+    }, { rootMargin: '300px' });
+    observer.observe(video);
+  });
+
+  /* ------------------------------------------------------------------
      Preloader
      ------------------------------------------------------------------ */
   var preloader = document.getElementById('preloader');
