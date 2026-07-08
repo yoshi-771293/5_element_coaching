@@ -337,7 +337,7 @@
           }
           phoenixTargets = pts;
         };
-        img.src = 'assets/img/phoenix-gold.png';
+        img.src = 'assets/img/phoenix-emblem.png';
       })();
 
       function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
