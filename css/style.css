@@ -167,6 +167,10 @@ main { position: relative; z-index: 2; }
   background-size: cover; background-position: center;
   will-change: transform;
 }
+.scene__video {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center;
+}
 .scene__veil {
   position: absolute; inset: 0;
   background: linear-gradient(100deg, rgba(20,16,13,0.72) 0%, rgba(20,16,13,0.35) 45%, rgba(20,16,13,0.15) 100%);
@@ -614,6 +618,9 @@ main { position: relative; z-index: 2; }
 .reveal, .reveal-img { opacity: 0; }
 .no-js .reveal, .no-js .reveal-img,
 .reduced-motion .reveal, .reduced-motion .reveal-img { opacity: 1; }
+
+/* Wort-für-Wort-Reveal: einzelne Wort-Spans, vom JS zur Laufzeit erzeugt */
+.word { display: inline-block; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 900px) {

@@ -87,9 +87,63 @@
   });
 
   /* ------------------------------------------------------------------
+     Wort-für-Wort-Reveal — Headlines/Statements bauen sich Wort für Wort
+     auf, statt als ganzer Block einzublenden (kein Scroll-Jank auf langen
+     Fließtext-Absätzen, deshalb bewusst nur auf die kurzen, dramatischen
+     Textebenen begrenzt).
+     ------------------------------------------------------------------ */
+  var WORD_SPLIT_SELECTOR = '.headline, .subline, .statement, .statement-soft, .eyebrow, .gateway__verb';
+
+  function wrapWords(node) {
+    Array.prototype.slice.call(node.childNodes).forEach(function (child) {
+      if (child.nodeType === Node.TEXT_NODE) {
+        var text = child.textContent;
+        if (!text.trim()) return;
+        var frag = document.createDocumentFragment();
+        text.split(/(\s+)/).forEach(function (part) {
+          if (part === '') return;
+          if (/^\s+$/.test(part)) {
+            frag.appendChild(document.createTextNode(part));
+          } else {
+            var span = document.createElement('span');
+            span.className = 'word';
+            span.textContent = part;
+            frag.appendChild(span);
+          }
+        });
+        node.replaceChild(frag, child);
+      } else if (child.nodeType === Node.ELEMENT_NODE && child.tagName !== 'BR') {
+        wrapWords(child);
+      }
+    });
+  }
+
+  document.querySelectorAll(WORD_SPLIT_SELECTOR).forEach(function (el) {
+    wrapWords(el);
+    var words = el.querySelectorAll('.word');
+    if (!words.length) return;
+    // Der Elternblock trägt evtl. noch die .reveal-Basisregel (opacity:0) —
+    // die Sichtbarkeit übernehmen jetzt die einzelnen Wörter.
+    gsap.set(el, { opacity: 1 });
+    var delay = parseFloat(el.dataset.delay || 0);
+    gsap.fromTo(words,
+      { opacity: 0, y: 22 },
+      {
+        opacity: 1, y: 0,
+        duration: 0.9,
+        delay: delay,
+        stagger: 0.045,
+        ease: 'power3.out',
+        scrollTrigger: { trigger: el, start: 'top 88%', once: true }
+      }
+    );
+  });
+
+  /* ------------------------------------------------------------------
      Reveals — Textblöcke gleiten sanft nach oben (Filmszenen-Wirkung)
      ------------------------------------------------------------------ */
   document.querySelectorAll('.reveal').forEach(function (el) {
+    if (el.matches(WORD_SPLIT_SELECTOR)) return; // wird oben Wort für Wort animiert
     var delay = parseFloat(el.dataset.delay || 0);
     gsap.fromTo(el,
       { opacity: 0, y: 46 },
@@ -177,9 +231,9 @@
      ------------------------------------------------------------------ */
   document.querySelectorAll('.headline').forEach(function (el) {
     gsap.fromTo(el,
-      { letterSpacing: '0.16em', opacity: 0 },
+      { letterSpacing: '0.16em' },
       {
-        letterSpacing: '0.055em', opacity: 1,
+        letterSpacing: '0.055em',
         duration: 2.4,
         ease: 'power2.out',
         scrollTrigger: { trigger: el, start: 'top 85%', once: true }
