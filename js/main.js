@@ -6,17 +6,6 @@
 (function () {
   'use strict';
 
-  /* ------------------------------------------------------------------
-     Konfiguration — vor Livegang eintragen
-     ------------------------------------------------------------------ */
-  var BOOKING_URL = '#';   // Calendly-Link für den 60-Min Deep Dive Call
-  var GATEWAY1_URL = '#';  // Checkout-/Startlink für Gateway 1 (Kurs 1)
-  var WAITLIST_URL = '#';  // Formular-Link Warteliste Rise of the Phoenix 2027
-
-  document.querySelectorAll('[data-booking]').forEach(function (a) { a.href = BOOKING_URL; });
-  document.querySelectorAll('[data-gateway1]').forEach(function (a) { a.href = GATEWAY1_URL; });
-  document.querySelectorAll('[data-waitlist]').forEach(function (a) { a.href = WAITLIST_URL; });
-
   var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReduced) document.documentElement.classList.add('reduced-motion');
 
