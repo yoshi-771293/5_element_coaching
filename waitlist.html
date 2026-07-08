@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warteliste — Rise of the Phoenix</title>
+<meta name="description" content="Trag dich in die Warteliste für Rise of the Phoenix 2027 ein.">
+<link rel="icon" type="image/png" href="assets/img/phoenix-gold.png">
+<link rel="preload" href="assets/fonts/cinzel-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/cormorant-garamond-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="index.html" class="site-header__mark">Carmen Zion</a>
+</header>
+
+<main class="page">
+  <section class="page__hero">
+    <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--center">
+    <p class="eyebrow">Rise of the Phoenix · 2027</p>
+    <h1 class="headline">Warteliste</h1>
+    <p class="body body--center">Die Türen öffnen sich 2027 — für 60 Frauen. Trag dich in die Warteliste
+    ein und du erfährst als Erste, wenn dein Platz bereitsteht.</p>
+
+    <div class="form-wrap" data-form-wrap>
+      <form class="form" data-webhook-form novalidate>
+        <div class="form__field">
+          <label for="waitlist-name">Name</label>
+          <input type="text" id="waitlist-name" name="name" autocomplete="name" required>
+        </div>
+        <div class="form__field">
+          <label for="waitlist-email">E-Mail</label>
+          <input type="email" id="waitlist-email" name="email" autocomplete="email" required>
+        </div>
+        <div class="form__honeypot" aria-hidden="true">
+          <label for="waitlist-website">Website</label>
+          <input type="text" id="waitlist-website" name="website" data-honeypot tabindex="-1" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn--copper form__submit">Zur Warteliste eintragen</button>
+      </form>
+      <p class="form__success" data-form-success hidden>Danke — du stehst auf der Warteliste. Wir melden uns, sobald sich die Türen öffnen.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--footer">
+  <p class="footer__brand">The World of the Phoenix</p>
+  <nav class="footer__nav">
+    <a href="contact.html">Kontakt</a>
+    <span>·</span>
+    <a href="#">Impressum</a>
+    <span>·</span>
+    <a href="#">Datenschutz</a>
+  </nav>
+</footer>
+
+<script src="js/forms.js"></script>
+</body>
+</html>

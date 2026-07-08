@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gateway 1 — Im Zeichen des Sturms</title>
+<meta name="description" content="Gateway 1 öffnet in Kürze. Trag dich ein und erfahre als Erste, wenn deine Reise beginnt.">
+<link rel="icon" type="image/png" href="assets/img/phoenix-gold.png">
+<link rel="preload" href="assets/fonts/cinzel-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/cormorant-garamond-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <a href="index.html" class="site-header__mark">Carmen Zion</a>
+</header>
+
+<main class="page">
+  <section class="page__hero">
+    <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--center">
+    <p class="eyebrow">Gateway 1 · Im Zeichen des Sturms</p>
+    <h1 class="headline">Fühle</h1>
+    <p class="body body--center">Gateway 1 wird gerade vorbereitet und öffnet in Kürze. Trag dich ein
+    und du erfährst als Erste, wenn deine Reise beginnen kann.</p>
+
+    <div class="form-wrap" data-form-wrap>
+      <form class="form" data-webhook-form novalidate>
+        <div class="form__field">
+          <label for="gateway1-name">Name</label>
+          <input type="text" id="gateway1-name" name="name" autocomplete="name" required>
+        </div>
+        <div class="form__field">
+          <label for="gateway1-email">E-Mail</label>
+          <input type="email" id="gateway1-email" name="email" autocomplete="email" required>
+        </div>
+        <div class="form__honeypot" aria-hidden="true">
+          <label for="gateway1-website">Website</label>
+          <input type="text" id="gateway1-website" name="website" data-honeypot tabindex="-1" autocomplete="off">
+        </div>
+        <button type="submit" class="btn btn--water form__submit">Benachrichtige mich</button>
+      </form>
+      <p class="form__success" data-form-success hidden>Danke — wir melden uns bei dir, sobald Gateway 1 startet.</p>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--footer">
+  <p class="footer__brand">The World of the Phoenix</p>
+  <nav class="footer__nav">
+    <a href="contact.html">Kontakt</a>
+    <span>·</span>
+    <a href="#">Impressum</a>
+    <span>·</span>
+    <a href="#">Datenschutz</a>
+  </nav>
+</footer>
+
+<script src="js/forms.js"></script>
+</body>
+</html>
