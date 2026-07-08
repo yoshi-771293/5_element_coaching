@@ -329,8 +329,8 @@ main { position: relative; z-index: 2; }
   gap: clamp(3rem, 6vw, 6rem);
   align-items: center;
 }
-.offer__media { aspect-ratio: 4 / 5; }
-.offer__media img { object-position: 20% center; filter: grayscale(1); }
+.offer__media { aspect-ratio: 16 / 9; }
+.offer__media img { object-position: center 30%; filter: grayscale(1); }
 .offer__soon {
   position: absolute; left: 2rem; bottom: 2rem;
   display: flex; flex-direction: column; gap: 0.2rem;
