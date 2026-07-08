@@ -40,13 +40,28 @@ Netflix-Trailer aufgebaut:
 | Gateway 3 Air | `#B7B1BE` / CTA `#F3E6B2` |
 | Gateway 4 Earth | `#A8C56A` / CTA `#496B43` |
 
+## Seiten
+
+Neben `index.html` (die Scroll-Journey) gibt es vier einfache Ein-Screen-Seiten, die die
+Funnel-CTAs auffangen:
+
+- `contact.html` — Kontaktformular (auch aus dem Footer erreichbar)
+- `waitlist.html` — Warteliste Rise of the Phoenix 2027
+- `booking.html` — Platzhalter für den Deep Dive Call, bis ein echter Calendly-Link existiert
+- `gateway1.html` — Platzhalter für Gateway 1, bis der echte Kurs live ist
+
+Alle vier laden `js/forms.js` statt der schweren GSAP/Lenis/Three.js-Bundles.
+
 ## Vor dem Livegang eintragen
 
-In `js/main.js` (oben):
+In `js/forms.js` (oben):
 
-- `BOOKING_URL` — Calendly-Link für den 60-Min Deep Dive Call
-- `GATEWAY1_URL` — Start-/Checkout-Link Gateway 1
-- `WAITLIST_URL` — Formular Warteliste Rise of the Phoenix 2027
+- `WEBHOOK_URL` — die echte Automatisierungs-Webhook-URL, sobald sie bereitsteht. Bis
+  dahin ist sie `'#'` und jedes Formular zeigt sofort die Erfolgsmeldung an, ohne eine
+  echte Anfrage zu senden.
+
+Impressum und Datenschutz im Footer sind noch `#`-Platzhalter — hier fehlt noch echter
+Rechtstext (Pflicht vor Livegang, siehe Code-Review).
 
 ## Lokal ansehen
 
