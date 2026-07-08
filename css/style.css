@@ -416,6 +416,50 @@ main { position: relative; z-index: 2; }
 }
 .scene--gateintro .subline { text-transform: uppercase; letter-spacing: 0.08em; }
 
+.gateway-select {
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 1.2rem; margin-top: 0.6rem;
+}
+.gateway-btn {
+  font-family: var(--font-display);
+  font-size: clamp(0.85rem, 1.2vw, 1rem);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--pristine);
+  background: transparent;
+  border: 1px solid rgba(244,243,234,0.28);
+  padding: 0.9rem 1.7rem;
+  cursor: pointer;
+  transition: background 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+}
+.gateway-btn--water { color: var(--water-st); border-color: rgba(127,175,190,0.45); }
+.gateway-btn--water:hover { background: rgba(127,175,190,0.12); border-color: var(--water-st); }
+.gateway-btn--fire { color: var(--fire-st); border-color: rgba(201,139,74,0.45); }
+.gateway-btn--fire:hover { background: rgba(201,139,74,0.12); border-color: var(--fire-st); }
+.gateway-btn--air { color: var(--air-st); border-color: rgba(183,177,190,0.45); }
+.gateway-btn--air:hover { background: rgba(183,177,190,0.12); border-color: var(--air-st); }
+.gateway-btn--earth { color: var(--earth-st); border-color: rgba(168,197,106,0.45); }
+.gateway-btn--earth:hover { background: rgba(168,197,106,0.12); border-color: var(--earth-st); }
+
+/* ---------- Toast ---------- */
+.toast {
+  position: fixed; left: 50%; bottom: 2.2rem; z-index: 97;
+  transform: translate(-50%, 20px);
+  background: var(--ink-soft);
+  border: 1px solid rgba(216,192,106,0.4);
+  color: var(--pristine);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 1rem 1.8rem;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.toast.is-visible { opacity: 1; transform: translate(-50%, 0); }
+
 /* ---------- Gateway scenes ---------- */
 .gateway { overflow: hidden; }
 .gateway__grid {

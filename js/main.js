@@ -41,6 +41,23 @@
     setTimeout(hidePreloader, 4000); // Fallback
   }
 
+  /* ------------------------------------------------------------------
+     Gateway-Buttons — "Coming soon" Toast statt toter Links
+     ------------------------------------------------------------------ */
+  var toast = document.getElementById('toast');
+  var toastTimer = null;
+  document.querySelectorAll('[data-gateway-btn]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      if (!toast) return;
+      toast.textContent = 'Coming soon';
+      toast.classList.add('is-visible');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function () {
+        toast.classList.remove('is-visible');
+      }, 2600);
+    });
+  });
+
   if (prefersReduced || typeof gsap === 'undefined') return;
 
   gsap.registerPlugin(ScrollTrigger);
