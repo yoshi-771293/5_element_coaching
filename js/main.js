@@ -218,6 +218,61 @@
       var points = new THREE.Points(geo, mat);
       scene3.add(points);
 
+      window.__phoenixDust = {
+        burst: function () {
+          var burstCount = 140;
+          var burstPositions = new Float32Array(burstCount * 3);
+          var burstVelocities = new Float32Array(burstCount * 3);
+          for (var b = 0; b < burstCount; b++) {
+            burstPositions[b * 3] = 0;
+            burstPositions[b * 3 + 1] = 0;
+            burstPositions[b * 3 + 2] = 0;
+            var angle = Math.random() * Math.PI * 2;
+            var spread = Math.random() * Math.PI - Math.PI / 2;
+            var speed = 2.5 + Math.random() * 4;
+            burstVelocities[b * 3] = Math.cos(angle) * Math.cos(spread) * speed;
+            burstVelocities[b * 3 + 1] = Math.sin(spread) * speed + 1.5;
+            burstVelocities[b * 3 + 2] = Math.sin(angle) * Math.cos(spread) * speed;
+          }
+          var burstGeo = new THREE.BufferGeometry();
+          burstGeo.setAttribute('position', new THREE.BufferAttribute(burstPositions, 3));
+          var burstMat = new THREE.PointsMaterial({
+            size: 0.22,
+            map: tex,
+            transparent: true,
+            opacity: 1,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            color: new THREE.Color('#D8C06A')
+          });
+          var burstPoints = new THREE.Points(burstGeo, burstMat);
+          scene3.add(burstPoints);
+
+          var start = null;
+          var duration = 1800;
+          (function animateBurst(now) {
+            if (!start) start = now;
+            var elapsed = now - start;
+            var t = Math.min(elapsed / duration, 1);
+            var pos = burstGeo.attributes.position.array;
+            for (var b = 0; b < burstCount; b++) {
+              pos[b * 3] = burstVelocities[b * 3] * t;
+              pos[b * 3 + 1] = burstVelocities[b * 3 + 1] * t - 2 * t * t;
+              pos[b * 3 + 2] = burstVelocities[b * 3 + 2] * t;
+            }
+            burstGeo.attributes.position.needsUpdate = true;
+            burstMat.opacity = 1 - t;
+            if (t < 1) {
+              requestAnimationFrame(animateBurst);
+            } else {
+              scene3.remove(burstPoints);
+              burstGeo.dispose();
+              burstMat.dispose();
+            }
+          })(performance.now());
+        }
+      };
+
       var mouseX = 0, mouseY = 0;
       window.addEventListener('mousemove', function (e) {
         mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
