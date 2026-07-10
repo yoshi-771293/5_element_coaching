@@ -45,33 +45,37 @@
     line.style.strokeDasharray = pathLen;
     line.style.strokeDashoffset = pathLen;
 
-    // Sparkles entlang des Fadens verteilen.
+    // Dichter, feiner Partikel-Staub entlang des Pfads (statt einer Linie).
+    // Die Punkte sitzen leicht gestreut neben dem Pfad, damit ein weicher
+    // Staub-Schweif statt eines Strichs entsteht.
     sparkG.textContent = '';
     sparkles = [];
-    var n = Math.max(12, Math.round(H / 340));
+    var n = Math.max(40, Math.round(H / 90));
     for (var i = 0; i < n; i++) {
-      var L = ((i + 0.5) / n) * pathLen + (Math.random() - 0.5) * (pathLen / n) * 0.7;
+      var L = ((i + 0.5) / n) * pathLen + (Math.random() - 0.5) * (pathLen / n) * 1.2;
       L = Math.max(0, Math.min(pathLen, L));
       var pt = line.getPointAtLength(L);
+      var jitter = (Math.random() - 0.5) * 26;   // seitliche Streuung → Staub, kein Strich
+      var jitterY = (Math.random() - 0.5) * 14;
       var c = document.createElementNS(SVGNS, 'circle');
-      c.setAttribute('cx', pt.x.toFixed(1));
-      c.setAttribute('cy', pt.y.toFixed(1));
-      c.setAttribute('r', (1.3 + Math.random() * 1.7).toFixed(2));
+      c.setAttribute('cx', (pt.x + jitter).toFixed(1));
+      c.setAttribute('cy', (pt.y + jitterY).toFixed(1));
+      c.setAttribute('r', (0.6 + Math.random() * 1.1).toFixed(2));
       c.setAttribute('class', 'thread-spark');
-      c.style.setProperty('--tw', (1.6 + Math.random() * 2.4).toFixed(2) + 's');
-      c.style.animationDelay = (Math.random() * 2.2).toFixed(2) + 's';
+      c.style.setProperty('--tw', (1.6 + Math.random() * 2.6).toFixed(2) + 's');
+      c.style.animationDelay = (Math.random() * 2.6).toFixed(2) + 's';
       sparkG.appendChild(c);
       sparkles.push({ el: c, L: L, lit: false });
     }
 
-    // Fließende Lichtpunkte (Strom), die den gezeichneten Faden entlanglaufen.
+    // Fließende Lichtpunkte (Strom), die den gezeichneten Pfad entlangtreiben.
     if (!motes.length && !reduced) {
-      for (var m = 0; m < 5; m++) {
+      for (var m = 0; m < 7; m++) {
         var mc = document.createElementNS(SVGNS, 'circle');
-        mc.setAttribute('r', (1.6 + Math.random()).toFixed(2));
+        mc.setAttribute('r', (1 + Math.random() * 0.8).toFixed(2));
         mc.setAttribute('class', 'thread-mote');
         moteG.appendChild(mc);
-        motes.push({ el: mc, phase: m / 5, speed: 0.05 + Math.random() * 0.03 });
+        motes.push({ el: mc, phase: m / 7, speed: 0.05 + Math.random() * 0.03 });
       }
     }
 
@@ -137,7 +141,7 @@
       mo.el.setAttribute('cy', pt.y.toFixed(1));
       // an den Enden aus-/einblenden, damit sie nicht hart auftauchen
       var edge = Math.min(mo.phase, 1 - mo.phase) * 6;
-      mo.el.style.opacity = Math.max(0, Math.min(0.9, edge)) * 0.9;
+      mo.el.style.opacity = Math.max(0, Math.min(0.9, edge)) * 0.55;
     }
   })(last);
 
