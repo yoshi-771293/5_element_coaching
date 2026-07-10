@@ -383,7 +383,7 @@ main { position: relative; z-index: 2; }
   align-items: center;
 }
 .offer__media { aspect-ratio: 16 / 9; }
-.offer__media img { object-position: center 30%; filter: grayscale(1); }
+.offer__media img { object-position: center 30%; }
 .offer__soon {
   position: absolute; left: 2rem; bottom: 2rem;
   display: flex; flex-direction: column; gap: 0.2rem;
