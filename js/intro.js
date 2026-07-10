@@ -47,7 +47,7 @@
     intro.classList.add('is-leaving');
     setTimeout(function () {
       intro.classList.add('intro--done');
-    }, 850);
+    }, 650);
   }
 
   var revealed = false;
@@ -64,16 +64,15 @@
     // Silhouette über der grau werdenden Flamme erscheinen.
     setTimeout(function () {
       if (video) video.classList.add('is-hidden');
-    }, 900);
-    // Das scharfe Logo blendet ein, sobald die Silhouette steht und die
-    // Glut zu schmelzen beginnt — die Partikel schmelzen sichtbar ins
-    // Logo (siehe burst()-Timing in main.js: Form ~1,5s, Melt bis ~3,0s).
+    }, 500);
+    // Das scharfe Logo blendet ein, sobald die Glut-Silhouette steht
+    // (siehe burst()-Timing in main.js: Form steht nach ~0,9s) — die Glut
+    // löst sich danach sichtbar auf, während das scharfe Logo darüber
+    // einblendet: die Embers "schmelzen" in das Logo.
     setTimeout(function () {
       if (logo) logo.classList.add('is-visible');
-    }, 1500);
-    // Nach dem Melt hält das Logo einen Moment, dann blendet das ganze
-    // Intro weg.
-    setTimeout(finish, 3800);
+    }, 900);
+    setTimeout(finish, 2100);
   }
 
   if (video) {
@@ -97,5 +96,5 @@
   }
 
   // Safety net: never trap a visitor behind the intro.
-  setTimeout(finish, 4300 + 3800);
+  setTimeout(finish, 4800);
 })();

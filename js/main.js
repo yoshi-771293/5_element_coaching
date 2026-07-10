@@ -338,7 +338,14 @@
           for (var y = 0; y < ch; y += 2) {
             for (var x = 0; x < cw; x += 2) {
               if (data[(y * cw + x) * 4 + 3] > 120) {
-                pts.push(x / cw - 0.5, 0.5 - y / ch);
+                // Zentriert auf (0,0) — deckungsgleich mit dem flex-zentrierten
+                // #introLogo, damit Glut-Silhouette und scharfes PNG exakt
+                // aufeinander ausgerichtet sind, statt versetzt zu wirken.
+                pts.push(
+                  (x / cw - 0.5) * 6.6,
+                  (0.5 - y / ch) * 6.6,
+                  (Math.random() - 0.5) * 0.5
+                );
               }
             }
           }
@@ -464,29 +471,25 @@
           }
 
           var start = null;
-          var duration = hasShape ? 3000 : 1400;
-          // Zeit-Phasen (Anteile der Gesamtdauer):
-          var assembleBy = 0.5;  // Form steht
-          var meltFrom = 0.62;   // ab hier schmilzt die Glut ins Logo
-          var sparkTravel = 1.9; // Sekunden, in denen Funken aufsteigen
+          var duration = hasShape ? 1750 : 1000;
+          var assembleBy = 0.5;   // Anteil der Zeit, bis die Form steht — schneller Einstieg
+          var fadeFrom = 0.66;    // langer, sanfter Ausklang: die Glut löst sich auf,
+                                   // während darüber das scharfe Logo einblendet ("melt into")
+          var riseAmount = 0.4;   // sanfter Aufstieg der fertigen Silhouette
 
           (function animateBurst(now) {
             if (!start) start = now;
             var elapsed = now - start;
             var t = Math.min(elapsed / duration, 1);
             var formT = easeOutCubic(Math.min(t / assembleBy, 1));
-            var meltT = t > meltFrom ? (t - meltFrom) / (1 - meltFrom) : 0;
 
             var pos = burstGeo.attributes.position.array;
             for (var b = 0; b < burstCount; b++) {
-              // Zielposition (deckungsgleich mit dem Logo)
               var tx = endPositions[b * 3];
               var ty = endPositions[b * 3 + 1];
               var tz = endPositions[b * 3 + 2];
-              // Melt: einzelne Glut-Punkte sinken verzögert nach unten weg
-              var mp = meltT > 0 ? easeOutCubic(Math.max(0, (meltT - meltDelay[b]) / (1 - meltDelay[b] * 0.5))) : 0;
-              pos[b * 3] = startPositions[b * 3] + (tx - startPositions[b * 3]) * formT + meltDrift[b * 2] * mp;
-              pos[b * 3 + 1] = startPositions[b * 3 + 1] + (ty - startPositions[b * 3 + 1]) * formT - meltDrift[b * 2 + 1] * mp;
+              pos[b * 3] = startPositions[b * 3] + (tx - startPositions[b * 3]) * formT;
+              pos[b * 3 + 1] = startPositions[b * 3 + 1] + (ty - startPositions[b * 3 + 1]) * formT;
               pos[b * 3 + 2] = startPositions[b * 3 + 2] + (tz - startPositions[b * 3 + 2]) * formT;
             }
             burstGeo.attributes.position.needsUpdate = true;
@@ -500,27 +503,22 @@
             }
             sparkGeo.attributes.position.needsUpdate = true;
 
-            // Silhouette: einblenden → halten → beim Melt ausblenden
             var op;
-            if (t < 0.1) {
-              op = t / 0.1;
-            } else if (t < meltFrom) {
+            if (t < 0.12) {
+              op = t / 0.12;
+            } else if (t < fadeFrom) {
               op = 1;
             } else {
-              op = 1 - meltT;
+              op = 1 - (t - fadeFrom) / (1 - fadeFrom);
             }
             op = Math.max(0, Math.min(1, op));
             burstMat.opacity = op * (hasShape ? 0.95 : 1);
-            // Punkte schrumpfen leicht, während sie wegschmelzen
-            burstMat.size = (hasShape ? 0.12 : 0.22) * (1 - meltT * 0.4);
-            // Funken verglühen früher
-            var sparkOp = t < 0.08 ? t / 0.08 : 1 - easeOutCubic(Math.max(0, (tSec / sparkTravel)));
+            var sparkOp = t < 0.08 ? t / 0.08 : 1 - easeOutCubic(Math.max(0, (t - 0.08) / 0.8));
             sparkMat.opacity = Math.max(0, Math.min(1, sparkOp)) * 0.9;
 
             if (t < 1) {
               requestAnimationFrame(animateBurst);
             } else {
-              parallaxLocked = false;
               scene3.remove(burstPoints);
               burstGeo.dispose();
               burstMat.dispose();

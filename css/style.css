@@ -608,9 +608,67 @@ main { position: relative; z-index: 2; }
   font-size: 0.95rem;
   opacity: 0.7;
 }
-.footer__nav { display: flex; gap: 1rem; align-items: center; font-size: 1rem; opacity: 0.5; }
+.footer__nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.7rem 1rem; align-items: center; font-size: 1rem; opacity: 0.5; max-width: 640px; }
 .footer__nav a { color: var(--pristine); text-decoration: none; transition: opacity 0.3s; }
 .footer__nav a:hover { opacity: 0.8; color: var(--gold); }
+
+/* ---------- Homepage — explore cards ---------- */
+.scene--explore { padding: 9rem 4vw 8rem; text-align: center; }
+.scene--explore .eyebrow, .scene--explore .subline { text-align: center; }
+.explore__grid {
+  margin-top: 3.5rem;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.6rem;
+  max-width: 1180px; margin-left: auto; margin-right: auto;
+}
+.explore__card {
+  position: relative;
+  display: block;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  text-decoration: none;
+  border: 1px solid rgba(216,192,106,0.14);
+}
+.explore__card img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.8s ease, filter 0.8s ease;
+  filter: brightness(0.72);
+}
+.explore__card:hover img, .explore__card:focus-visible img { transform: scale(1.06); filter: brightness(0.55); }
+.explore__card-fade {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, rgba(20,16,13,0.15) 0%, rgba(20,16,13,0.55) 55%, rgba(20,16,13,0.95) 100%);
+}
+.explore__card-text {
+  position: absolute; left: 0; right: 0; bottom: 0;
+  padding: 1.8rem 1.6rem;
+  text-align: left;
+}
+.explore__card-eyebrow {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--gold); opacity: 0.9; margin-bottom: 0.6rem;
+}
+.explore__card-text h3 {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 1.55rem);
+  color: var(--pristine);
+  margin-bottom: 0.6rem;
+}
+.explore__card-text p { font-size: 1rem; opacity: 0.85; margin-bottom: 1rem; }
+.explore__card-cta {
+  font-family: var(--font-display);
+  font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gold);
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+.explore__card:hover .explore__card-cta, .explore__card:focus-visible .explore__card-cta { transform: translateX(4px); }
+.explore__card:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+
+@media (max-width: 900px) {
+  .explore__grid { grid-template-columns: 1fr; max-width: 420px; }
+}
 
 /* ---------- Reveal base states (JS overrides) ---------- */
 .reveal, .reveal-img { opacity: 0; }
@@ -644,36 +702,74 @@ main { position: relative; z-index: 2; }
   #dust { opacity: 0.45; }
 }
 
-/* ---------- Site header (Logo-Nav oben links, kein Menü) ---------- */
+/* ---------- Site header — Phoenix mark + real navigation ---------- */
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
 .site-header {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 40;
-  display: flex; justify-content: flex-start;
+  position: fixed; top: 0; left: 0; right: 0; z-index: 150;
+  display: flex; align-items: center; justify-content: space-between;
   padding: 1.3rem 4vw;
   pointer-events: none;
 }
-.site-header__brand {
+.site-header__logo {
   pointer-events: auto;
-  display: flex; align-items: center; gap: 0.9rem;
-  text-decoration: none;
+  display: flex; align-items: center;
   opacity: 0.92;
   transition: opacity 0.3s ease;
 }
-.site-header__brand:hover { opacity: 1; }
-.site-header__phoenix {
-  width: clamp(48px, 4.6vw, 68px);
-  filter: drop-shadow(0 0 12px rgba(216,192,106,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+.site-header__logo img {
+  height: clamp(34px, 4vw, 46px); width: auto;
+  filter: drop-shadow(0 2px 12px rgba(0,0,0,0.55));
 }
-.site-header__cz {
-  width: clamp(52px, 5vw, 72px);
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+.site-header__logo:hover, .site-header__logo:focus-visible { opacity: 1; }
+
+.site-nav {
+  pointer-events: auto;
+  display: flex; align-items: center; gap: clamp(1.2rem, 2.4vw, 2.4rem);
 }
-.site-header__mark {
+.site-nav__link {
   font-family: var(--font-display);
-  font-size: clamp(0.85rem, 1.3vw, 1.05rem);
-  letter-spacing: 0.32em;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--gold);
-  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+  color: var(--pristine);
+  text-decoration: none;
+  opacity: 0.72;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+.site-nav__link:hover, .site-nav__link:focus-visible,
+.site-nav__link[aria-current="page"] { opacity: 1; color: var(--gold); }
+
+.site-nav__toggle {
+  display: none;
+  pointer-events: auto;
+  flex-direction: column; justify-content: center; align-items: center; gap: 5px;
+  width: 40px; height: 36px;
+  background: transparent; border: none; cursor: pointer;
+}
+.site-nav__toggle span {
+  display: block; width: 22px; height: 2px;
+  background: var(--pristine);
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+.site-nav__toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.site-nav__toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.site-nav__toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+@media (max-width: 760px) {
+  .site-nav__toggle { display: flex; }
+  .site-nav {
+    position: fixed; inset: 0; z-index: 140;
+    flex-direction: column; justify-content: center; gap: 2.2rem;
+    background: var(--ink);
+    opacity: 0; visibility: hidden; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .site-nav.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
+  .site-nav__link { font-size: 1.1rem; opacity: 0.85; }
 }
 
 /* ---------- Simple single-screen pages (contact/waitlist/booking/gateway1) ---------- */
@@ -754,11 +850,16 @@ button.btn { appearance: none; -webkit-appearance: none; background: transparent
   position: relative; z-index: 2;
   width: clamp(160px, 22vw, 280px);
   opacity: 0;
-  filter: drop-shadow(0 0 40px rgba(216, 192, 106, 0.4));
-  transition: opacity 1.4s ease;
+  transform: scale(0.94);
+  filter: drop-shadow(0 0 40px rgba(216, 192, 106, 0.4)) blur(7px);
+  transition: opacity 0.85s ease, transform 0.85s ease, filter 0.85s ease;
 }
-.intro__logo.is-visible { opacity: 1; }
-.intro.is-leaving { opacity: 0; transition: opacity 0.8s ease; pointer-events: none; }
+.intro__logo.is-visible {
+  opacity: 1;
+  transform: scale(1);
+  filter: drop-shadow(0 0 40px rgba(216, 192, 106, 0.4)) blur(0);
+}
+.intro.is-leaving { opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
 .intro__skip {
   position: absolute; bottom: 2rem; right: 2rem; z-index: 3;
   font-family: var(--font-display);
