@@ -644,26 +644,37 @@ main { position: relative; z-index: 2; }
   #dust { opacity: 0.45; }
 }
 
-/* ---------- Site header (logo-only, no menu) ---------- */
+/* ---------- Site header (Logo-Nav oben links, kein Menü) ---------- */
 .site-header {
   position: fixed; top: 0; left: 0; right: 0; z-index: 40;
-  display: flex; justify-content: center;
-  padding: 1.6rem 4vw;
+  display: flex; justify-content: flex-start;
+  padding: 1.3rem 4vw;
   pointer-events: none;
 }
-.site-header__mark {
+.site-header__brand {
   pointer-events: auto;
+  display: flex; align-items: center; gap: 0.9rem;
+  text-decoration: none;
+  opacity: 0.92;
+  transition: opacity 0.3s ease;
+}
+.site-header__brand:hover { opacity: 1; }
+.site-header__phoenix {
+  width: clamp(48px, 4.6vw, 68px);
+  filter: drop-shadow(0 0 12px rgba(216,192,106,0.35)) drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+}
+.site-header__cz {
+  width: clamp(52px, 5vw, 72px);
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));
+}
+.site-header__mark {
   font-family: var(--font-display);
   font-size: clamp(0.85rem, 1.3vw, 1.05rem);
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--gold);
-  text-decoration: none;
   text-shadow: 0 2px 10px rgba(0,0,0,0.5);
-  opacity: 0.88;
-  transition: opacity 0.3s ease;
 }
-.site-header__mark:hover { opacity: 1; }
 
 /* ---------- Simple single-screen pages (contact/waitlist/booking/gateway1) ---------- */
 .page {

@@ -65,12 +65,15 @@
     setTimeout(function () {
       if (video) video.classList.add('is-hidden');
     }, 900);
-    // Das scharfe Logo blendet ein, sobald die Silhouette steht
-    // (siehe burst()-Timing in main.js: Form steht nach ~1,6s).
+    // Das scharfe Logo blendet ein, sobald die Silhouette steht und die
+    // Glut zu schmelzen beginnt — die Partikel schmelzen sichtbar ins
+    // Logo (siehe burst()-Timing in main.js: Form ~1,5s, Melt bis ~3,0s).
     setTimeout(function () {
       if (logo) logo.classList.add('is-visible');
-    }, 1600);
-    setTimeout(finish, 3300);
+    }, 1500);
+    // Nach dem Melt hält das Logo einen Moment, dann blendet das ganze
+    // Intro weg.
+    setTimeout(finish, 3800);
   }
 
   if (video) {
@@ -94,5 +97,5 @@
   }
 
   // Safety net: never trap a visitor behind the intro.
-  setTimeout(finish, 4300 + 3300);
+  setTimeout(finish, 4300 + 3800);
 })();
