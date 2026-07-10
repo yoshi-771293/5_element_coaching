@@ -251,19 +251,8 @@
     );
   });
 
-  /* ------------------------------------------------------------------
-     Custom Cursor Glow
-     ------------------------------------------------------------------ */
-  var glow = document.getElementById('cursorGlow');
-  if (glow && window.matchMedia('(hover: hover)').matches) {
-    var gx = gsap.quickTo(glow, 'x', { duration: 0.7, ease: 'power3.out' });
-    var gy = gsap.quickTo(glow, 'y', { duration: 0.7, ease: 'power3.out' });
-    window.addEventListener('mousemove', function (e) {
-      document.body.classList.add('has-cursor');
-      gx(e.clientX);
-      gy(e.clientY);
-    });
-  }
+  /* Custom Cursor Glow lebt jetzt eigenständig in js/cursor.js (auf allen
+     Seiten, unabhängig von GSAP). */
 
   /* ------------------------------------------------------------------
      Three.js — schwebender Goldstaub (subtil, cinematic)

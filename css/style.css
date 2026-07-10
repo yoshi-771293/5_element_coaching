@@ -51,6 +51,7 @@
 :root {
   --ink: #14100D;
   --ink-soft: #1b1611;
+  --obsidian: #0A0A0A;          /* reine Obsidian-Basis für die Elemental-Szenen */
   --pristine: #F4F3EA;
   --gold: #D8C06A;
   --butterum: #C98B4A;
@@ -64,6 +65,14 @@
   --air-cta: #F3E6B2;
   --earth-st: #A8C56A;
   --earth-cta: #496B43;
+
+  /* Element-Akzentfarben als RGB-Tripel — nur als Glow/Akzent auf Obsidian,
+     nie als flächiger Hintergrund. */
+  --glow-gold:  216, 192, 106;
+  --glow-water:  58, 140, 168;
+  --glow-fire:  214,  92,  44;
+  --glow-air:   178, 182, 205;
+  --glow-earth: 116, 158,  74;
 
   --font-display: 'Cinzel', serif;
   --font-body: 'Cormorant Garamond', serif;
@@ -129,14 +138,19 @@ img { max-width: 100%; display: block; }
 }
 
 .cursor-glow {
-  position: fixed; z-index: 99;
-  width: 340px; height: 340px;
-  margin: -170px 0 0 -170px;
+  position: fixed; z-index: 99; top: 0; left: 0;
+  width: 374px; height: 374px;            /* +10% Größe */
+  margin: -187px 0 0 -187px;
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, rgba(216,192,106,0.07) 0%, rgba(216,192,106,0.025) 40%, transparent 70%);
+  /* +10% Intensität ggü. vorher (0.077 / 0.0275) und ein etwas weiterer Falloff */
+  background: radial-gradient(circle,
+    rgba(var(--cursor-glow-rgb, var(--glow-gold)), 0.077) 0%,
+    rgba(var(--cursor-glow-rgb, var(--glow-gold)), 0.0275) 42%,
+    transparent 72%);
   opacity: 0;
-  transition: opacity 0.6s;
+  transition: opacity 0.6s, background 0.8s ease;
+  will-change: transform;
 }
 body.has-cursor .cursor-glow { opacity: 1; }
 @media (hover: none) { .cursor-glow { display: none; } }
@@ -539,6 +553,74 @@ main { position: relative; z-index: 2; }
 .gateway--earth .gateway__verb { color: var(--earth-st); }
 .gateway--earth .gateway__lines { color: var(--earth-st); }
 .gateway--earth .gateway__title { color: var(--earth-st); }
+
+/* =====================================================================
+   Elemental Coaching — Obsidian-Basis, Farbe nur als Akzent
+   ===================================================================== */
+body.elemental { background: var(--obsidian); }
+.elemental .scene--dark { background: var(--obsidian); }
+/* Hero läuft ohne großes Foto — Obsidian + Element-Feld dahinter */
+.elemental .scene--elements .scene__bg { background: var(--obsidian); }
+.elemental .scene--elements .scene__img { display: none; }
+.elemental .scene--elements .scene__veil { background: none; }
+
+/* Vollflächiges Three.js-Element-Feld (ersetzt den Goldstaub auf dieser Seite) */
+#elementField {
+  position: fixed; inset: 0; z-index: 1;
+  pointer-events: none;
+  opacity: 0.9;
+}
+
+/* Element-Videos in den Gateway-Rahmen */
+.frame video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gateway__media {
+  position: relative;
+  background: var(--obsidian);
+  border: 1px solid rgba(var(--gw-glow, var(--glow-gold)), 0.22);
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.6),
+    0 0 60px -10px rgba(var(--gw-glow, var(--glow-gold)), 0.28);
+  transition: box-shadow 0.6s ease, border-color 0.6s ease;
+}
+.gateway__media:hover {
+  box-shadow:
+    0 34px 90px rgba(0,0,0,0.65),
+    0 0 90px -6px rgba(var(--gw-glow, var(--glow-gold)), 0.42);
+  border-color: rgba(var(--gw-glow, var(--glow-gold)), 0.4);
+}
+/* Weicher Element-Glow, der hinter dem Video-Rahmen hervorleuchtet */
+.gateway__glow {
+  position: absolute; inset: -18% -12%;
+  z-index: -1; pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    rgba(var(--gw-glow, var(--glow-gold)), 0.28) 0%,
+    rgba(var(--gw-glow, var(--glow-gold)), 0.10) 38%,
+    transparent 70%);
+  filter: blur(14px);
+  opacity: 0.9;
+}
+/* Video-Tönung: hebt die Element-Farbe im Clip an, ohne ihn zu überdecken */
+.gateway__media .frame__fade {
+  background:
+    radial-gradient(ellipse at center, transparent 42%, rgba(10,10,10,0.55) 100%),
+    linear-gradient(180deg, rgba(10,10,10,0.20) 0%, transparent 24%, transparent 58%, rgba(10,10,10,0.86) 100%);
+}
+
+/* Per-Element Glow-Farbe für Rahmen, Glow und Cursor-Tönung */
+.gateway--water { --gw-glow: var(--glow-water); }
+.gateway--fire  { --gw-glow: var(--glow-fire); }
+.gateway--air   { --gw-glow: var(--glow-air); }
+.gateway--earth { --gw-glow: var(--glow-earth); }
+
+/* Element-Glow auch hinter den Textspalten, dezent */
+.elemental .gateway__side { position: relative; }
+.elemental .gateway__side::before {
+  content: ""; position: absolute; z-index: -1;
+  left: -12%; top: -8%; width: 120%; height: 116%;
+  background: radial-gradient(ellipse at 30% 40%,
+    rgba(var(--gw-glow, var(--glow-gold)), 0.12) 0%, transparent 62%);
+  filter: blur(10px); pointer-events: none;
+}
 
 /* ---------- Journey CTA ---------- */
 .scene--journey {
