@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elemental Coaching — The World of the Phoenix</title>
+<meta name="description" content="The 4 Gateways of Human Consciousness — Water, Fire, Air, Earth. Das Fundament deiner Bewusstseinsreise.">
+<link rel="icon" type="image/png" href="assets/img/phoenix-gold.png">
+<link rel="preload" href="assets/fonts/cinzel-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/cormorant-garamond-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- Preloader -->
+<div class="preloader" id="preloader">
+  <img src="assets/img/phoenix-gold.png" alt="" class="preloader__phoenix">
+  <div class="preloader__line"></div>
+</div>
+
+<!-- Three.js golden dust -->
+<canvas id="dust"></canvas>
+
+<!-- Custom cursor glow -->
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- Scroll progress hairline -->
+<div class="progress" id="progress"></div>
+
+<header class="site-header">
+  <a href="index.html" class="site-header__logo" aria-label="Startseite – The World of the Phoenix">
+    <img src="assets/img/phoenix-gold.png" alt="The World of the Phoenix">
+  </a>
+  <nav class="site-nav" id="siteNav">
+    <a href="index.html" class="site-nav__link">Home</a>
+    <a href="elemental-coaching.html" class="site-nav__link" aria-current="page">Elemental Coaching</a>
+    <a href="phoenix-rising.html" class="site-nav__link">Rise of the Phoenix</a>
+    <a href="founder.html" class="site-nav__link">Gründerin</a>
+    <a href="contact.html" class="site-nav__link">Kontakt</a>
+  </nav>
+  <button type="button" class="site-nav__toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav">
+    <span></span><span></span><span></span>
+    <span class="sr-only">Menü öffnen</span>
+  </button>
+</header>
+
+<main id="main">
+
+  <!-- ============ ELEMENTE HERO ============ -->
+  <section class="scene scene--hero scene--elements" id="gateways">
+    <div class="scene__bg">
+      <div class="scene__img kenburns" data-speed="0.85" style="background-image:url('assets/img/sand-explosion.jpg')"></div>
+      <div class="scene__veil"></div>
+      <div class="scene__fade scene__fade--top"></div>
+      <div class="scene__fade scene__fade--bottom"></div>
+    </div>
+    <div class="scene__content">
+      <p class="eyebrow reveal">Die geballte Urkraft</p>
+      <h1 class="headline reveal" data-delay="0.3">Elemental Coaching</h1>
+      <p class="statement reveal" data-delay="0.6">Für Unternehmerinnen, die bereit sind,<br>sich selbst auf einer tiefen Ebene zu begegnen.</p>
+    </div>
+  </section>
+
+  <!-- ============ GATEWAYS INTRO ============ -->
+  <section class="scene scene--dark scene--gateintro">
+    <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--center reveal">
+    <h2 class="subline subline--copper reveal">The 4 Gateways of Human Consciousness</h2>
+    <p class="body body--center reveal">Jedes Element trägt eine uralte Weisheit in sich. Gemeinsam bilden die 4 Gateways
+    das Fundament von Rise of the Phoenix und den Ausgangspunkt deiner Reise. Sie eröffnen dir neue
+    Perspektiven auf dich selbst, deine Führung und dein Leben.</p>
+    <p class="body body--center reveal">Jedes Element öffnet ein neues Tor zu deinem Bewusstsein und lädt dich ein,
+    dir selbst auf einer tieferen Ebene zu begegnen. Schritt für Schritt gewinnst du mehr Klarheit über
+    deine innere Ausrichtung&nbsp;– und schaffst die Grundlage, dein Business bewusst aus deiner
+    innersten Wahrheit heraus zu führen.</p>
+    <div class="gateway-select reveal">
+      <button type="button" class="plaque-btn" data-gateway-btn>
+        <img src="assets/img/gateway1-water.png" alt="Gateway 1 – Water">
+      </button>
+      <button type="button" class="plaque-btn" data-gateway-btn>
+        <img src="assets/img/gateway2-fire.png" alt="Gateway 2 – Fire">
+      </button>
+      <button type="button" class="plaque-btn" data-gateway-btn>
+        <img src="assets/img/gateway3-air.png" alt="Gateway 3 – Air">
+      </button>
+      <button type="button" class="plaque-btn" data-gateway-btn>
+        <img src="assets/img/gateway4-earth.png" alt="Gateway 4 – Earth">
+      </button>
+    </div>
+  </section>
+
+  <!-- ============ GATEWAY 1 WATER ============ -->
+  <section class="scene scene--dark gateway gateway--water">
+    <div class="gateway__grid">
+      <div class="gateway__side">
+        <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--gw reveal">
+        <h3 class="gateway__verb reveal">Fühle</h3>
+        <p class="gateway__lines reveal">Löse, was dich zurückhält<br>Tauche ein in deine Emotionen<br>Finde in deine wahre Essenz</p>
+        <button type="button" class="plaque-btn reveal" data-gateway-btn>
+          <img src="assets/img/gateway1-water.png" alt="Gateway 1 – Water" class="gateway__plaque">
+        </button>
+      </div>
+      <figure class="gateway__media frame reveal-img" data-speed="1.05" data-gateway-btn role="button" tabindex="0">
+        <img src="assets/img/gw-storm.jpg" alt="">
+        <div class="frame__fade"></div>
+        <figcaption class="gateway__caption">
+          <span class="gateway__title">Im Zeichen des Sturms</span>
+          <span class="gateway__keywords">Emotionen&nbsp;·&nbsp;Hingabe&nbsp;·&nbsp;Loslassen</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ GATEWAY 2 FIRE ============ -->
+  <section class="scene scene--dark gateway gateway--fire">
+    <div class="gateway__grid gateway__grid--flip">
+      <figure class="gateway__media frame reveal-img" data-speed="1.05" data-gateway-btn role="button" tabindex="0">
+        <img src="assets/img/gw-fire.jpg" alt="">
+        <div class="frame__fade"></div>
+        <figcaption class="gateway__caption">
+          <span class="gateway__title">Im Wandel des Feuers</span>
+          <span class="gateway__keywords">Mut&nbsp;·&nbsp;Entschlossenheit&nbsp;·&nbsp;Leidenschaft</span>
+        </figcaption>
+      </figure>
+      <div class="gateway__side">
+        <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--gw reveal">
+        <h3 class="gateway__verb reveal">Handle</h3>
+        <p class="gateway__lines reveal">Entfalte deine innere Kraft<br>Verwandle Angst in Mut<br>Entzünde deine Vision</p>
+        <button type="button" class="plaque-btn reveal" data-gateway-btn>
+          <img src="assets/img/gateway2-fire.png" alt="Gateway 2 – Fire" class="gateway__plaque">
+        </button>
+        <p class="gateway__lock reveal">Wird nach Abschluss von Gateway 1 freigeschaltet</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ GATEWAY 3 AIR ============ -->
+  <section class="scene scene--dark gateway gateway--air">
+    <div class="gateway__grid">
+      <div class="gateway__side">
+        <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--gw reveal">
+        <h3 class="gateway__verb reveal">Erkenne</h3>
+        <p class="gateway__lines reveal">Erhebe dich über alte Gedanken<br>Gewinne Klarheit<br>Öffne neue Perspektiven</p>
+        <button type="button" class="plaque-btn reveal" data-gateway-btn>
+          <img src="assets/img/gateway3-air.png" alt="Gateway 3 – Air" class="gateway__plaque">
+        </button>
+        <p class="gateway__lock reveal">Wird nach Abschluss von Gateway 2 freigeschaltet</p>
+      </div>
+      <figure class="gateway__media frame reveal-img" data-speed="1.05" data-gateway-btn role="button" tabindex="0">
+        <img src="assets/img/gw-clouds.jpg" alt="">
+        <div class="frame__fade"></div>
+        <figcaption class="gateway__caption">
+          <span class="gateway__title">Der Ruf der Stille</span>
+          <span class="gateway__keywords">Gedanken&nbsp;·&nbsp;Klarheit&nbsp;·&nbsp;Vision</span>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ GATEWAY 4 EARTH ============ -->
+  <section class="scene scene--dark gateway gateway--earth">
+    <div class="gateway__grid gateway__grid--flip">
+      <figure class="gateway__media frame reveal-img" data-speed="1.05" data-gateway-btn role="button" tabindex="0">
+        <img src="assets/img/gw-forest.jpg" alt="">
+        <div class="frame__fade"></div>
+        <figcaption class="gateway__caption">
+          <span class="gateway__title">Die Wurzeln des Ursprungs</span>
+          <span class="gateway__keywords">Stabilität&nbsp;·&nbsp;Verwurzelung&nbsp;·&nbsp;Vertrauen</span>
+        </figcaption>
+      </figure>
+      <div class="gateway__side">
+        <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--gw reveal">
+        <h3 class="gateway__verb reveal">Verankere</h3>
+        <p class="gateway__lines reveal">Baue ein solides Fundament<br>Heile deine Wurzeln<br>Baue dein Vermächtnis</p>
+        <button type="button" class="plaque-btn reveal" data-gateway-btn>
+          <img src="assets/img/gateway4-earth.png" alt="Gateway 4 – Earth" class="gateway__plaque">
+        </button>
+        <p class="gateway__lock reveal">Wird nach Abschluss von Gateway 3 freigeschaltet</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ REISE-START CTA ============ -->
+  <section class="scene scene--dark scene--journey">
+    <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--center reveal">
+    <h2 class="subline reveal">Deine Reise beginnt mit Gateway 1&nbsp;–<br>Im Zeichen des Sturms</h2>
+    <p class="body body--center reveal">Erst nach dem erfolgreichen Abschluss dieses ersten Gateways werden die
+    weiteren Gateways freigeschaltet. So baut jede Bewusstseinsreise auf der vorherigen auf und führt
+    dich Schritt für Schritt tiefer in die Phoenix Philosophy.</p>
+    <figure class="journey__media frame reveal-img" data-speed="1.04">
+      <img src="assets/img/journey-woman.jpg" alt="">
+      <div class="frame__fade"></div>
+    </figure>
+    <a href="gateway1.html" class="btn btn--water reveal">Starte jetzt Gateway 1 – Im Zeichen des Sturms</a>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer class="footer">
+    <img src="assets/img/phoenix-gold.png" alt="" class="phoenix phoenix--footer">
+    <p class="footer__brand">The World of the Phoenix</p>
+    <nav class="footer__nav">
+      <a href="index.html">Home</a>
+      <span>·</span>
+      <a href="elemental-coaching.html">Elemental Coaching</a>
+      <span>·</span>
+      <a href="phoenix-rising.html">Rise of the Phoenix</a>
+      <span>·</span>
+      <a href="founder.html">Gründerin</a>
+      <span>·</span>
+      <a href="contact.html">Kontakt</a>
+      <span>·</span>
+      <a href="#">Impressum</a>
+      <span>·</span>
+      <a href="#">Datenschutz</a>
+    </nav>
+  </footer>
+
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="js/vendor/three.min.js"></script>
+<script src="js/vendor/gsap.min.js"></script>
+<script src="js/vendor/ScrollTrigger.min.js"></script>
+<script src="js/vendor/lenis.min.js"></script>
+<script src="js/nav.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

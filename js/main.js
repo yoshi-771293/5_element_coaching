@@ -337,9 +337,12 @@
           for (var y = 0; y < ch; y += 2) {
             for (var x = 0; x < cw; x += 2) {
               if (data[(y * cw + x) * 4 + 3] > 120) {
+                // Zentriert auf (0,0) — deckungsgleich mit dem flex-zentrierten
+                // #introLogo, damit Glut-Silhouette und scharfes PNG exakt
+                // aufeinander ausgerichtet sind, statt versetzt zu wirken.
                 pts.push(
-                  (x / cw - 0.5) * 7.4,
-                  (0.5 - y / ch) * 7.4 + 0.9,
+                  (x / cw - 0.5) * 6.6,
+                  (0.5 - y / ch) * 6.6,
                   (Math.random() - 0.5) * 0.5
                 );
               }
@@ -433,10 +436,11 @@
           scene3.add(sparkPoints);
 
           var start = null;
-          var duration = hasShape ? 2600 : 1400;
-          var assembleBy = 0.62;  // Anteil der Zeit, bis die Form steht
-          var fadeFrom = 0.87;    // ab hier ausblenden
-          var riseAmount = 0.45;  // sanfter Aufstieg der fertigen Silhouette
+          var duration = hasShape ? 1750 : 1000;
+          var assembleBy = 0.5;   // Anteil der Zeit, bis die Form steht — schneller Einstieg
+          var fadeFrom = 0.66;    // langer, sanfter Ausklang: die Glut löst sich auf,
+                                   // während darüber das scharfe Logo einblendet ("melt into")
+          var riseAmount = 0.4;   // sanfter Aufstieg der fertigen Silhouette
 
           (function animateBurst(now) {
             if (!start) start = now;
