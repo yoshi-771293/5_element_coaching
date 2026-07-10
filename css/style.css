@@ -166,6 +166,41 @@ body.has-cursor .cursor-glow { opacity: 1; }
 
 main { position: relative; z-index: 2; }
 
+/* ---------- Golden Thread — verbindet alle Sektionen der Startseite ---------- */
+#goldenThread {
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 4; pointer-events: none;
+  overflow: visible;
+  mix-blend-mode: screen;
+}
+.thread-line {
+  fill: none;
+  stroke: url(#threadGrad);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  filter: url(#threadGlow);
+  opacity: 0.92;
+}
+/* Twinkelnde Funken entlang des Fadens */
+.thread-spark {
+  fill: #F6ECC0;
+  opacity: 0;
+  filter: url(#threadGlow);
+}
+.thread-spark.is-lit { animation: threadTwinkle var(--tw, 2s) ease-in-out infinite; }
+@keyframes threadTwinkle {
+  0%, 100% { opacity: 0; }
+  50%      { opacity: 0.95; }
+}
+/* Fließende Lichtpunkte, die wie ein Strom den Faden entlanglaufen */
+.thread-mote { fill: #FFF4CE; filter: url(#threadGlow); opacity: 0; }
+/* Kometen-Kopf an der Spitze des sich zeichnenden Fadens */
+.thread-comet { opacity: 0; transition: opacity 0.3s ease; }
+.thread-comet .halo { fill: rgba(216, 192, 106, 0.55); filter: url(#threadGlow); }
+.thread-comet .core { fill: #FFF7DA; filter: url(#threadGlow); }
+.reduced-motion .thread-comet, .reduced-motion .thread-mote { display: none; }
+
 /* ---------- Scenes ---------- */
 .scene { position: relative; }
 

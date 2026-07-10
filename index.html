@@ -53,6 +53,28 @@
 
 <main id="main">
 
+  <!-- Golden Thread — verbindet alle Sektionen, zeichnet sich beim Scrollen -->
+  <svg id="goldenThread" aria-hidden="true" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id="threadGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#8A5B3D"/>
+        <stop offset="0.5" stop-color="#D8C06A"/>
+        <stop offset="1" stop-color="#F4E9B8"/>
+      </linearGradient>
+      <filter id="threadGlow" x="-60%" y="-60%" width="220%" height="220%">
+        <feGaussianBlur stdDeviation="2.6" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>
+    </defs>
+    <path class="thread-line"></path>
+    <g class="thread-sparkles"></g>
+    <g class="thread-motes"></g>
+    <g class="thread-comet">
+      <circle class="halo" r="9"></circle>
+      <circle class="core" r="3"></circle>
+    </g>
+  </svg>
+
   <!-- ============ SZENE 1 · HERO ============ -->
   <section class="scene scene--hero" id="hero">
     <div class="scene__bg">
@@ -80,8 +102,8 @@
   <!-- ============ SZENE 2 · SPIEGEL I ============ -->
   <section class="scene scene--dark scene--mirror">
     <div class="mirror__grid">
-      <figure class="mirror__media frame reveal-img" data-speed="1.06">
-        <img src="assets/img/woman-dune.jpg" alt="">
+      <figure class="mirror__media frame reveal-img">
+        <video data-lazy-video="assets/video/home-solo-cry.mp4" poster="assets/img/woman-dune.jpg" muted loop playsinline preload="none"></video>
         <div class="frame__fade"></div>
       </figure>
       <div class="mirror__text">
@@ -103,8 +125,8 @@
           <p class="statement">doch innerlich fühlst du dich leer<br>und nicht mehr mit dir selbst verbunden.</p>
         </div>
       </div>
-      <figure class="mirror__media frame reveal-img" data-speed="0.94">
-        <img src="assets/img/woman-praying.jpg" alt="">
+      <figure class="mirror__media frame reveal-img">
+        <video data-lazy-video="assets/video/home-cry-dramatic.mp4" poster="assets/img/woman-praying.jpg" muted loop playsinline preload="none"></video>
         <div class="frame__fade"></div>
       </figure>
     </div>
@@ -120,8 +142,8 @@
         Verantwortung und Erwartungen<br>
         heraus geworden bist?</h2>
       </div>
-      <figure class="mirror__media frame reveal-img" data-speed="1.05">
-        <img src="assets/img/women-embrace.jpg" alt="">
+      <figure class="mirror__media frame reveal-img">
+        <video data-lazy-video="assets/video/home-fire-circle.mp4" poster="assets/img/women-embrace.jpg" muted loop playsinline preload="none"></video>
         <div class="frame__fade"></div>
       </figure>
     </div>
@@ -145,8 +167,8 @@
 
   <!-- ============ SZENE 4 · DER RAUM ============ -->
   <section class="scene scene--dark scene--room">
-    <figure class="room__media frame frame--wide reveal-img" data-speed="1.04">
-      <img src="assets/img/women-walking.jpg" alt="">
+    <figure class="room__media frame frame--wide reveal-img">
+      <video data-lazy-video="assets/video/home-walking-together.mp4" poster="assets/img/women-walking.jpg" muted loop playsinline preload="none"></video>
       <div class="frame__fade"></div>
     </figure>
     <div class="room__text">
@@ -231,6 +253,7 @@
 <script src="js/nav.js"></script>
 <script src="js/cursor.js"></script>
 <script src="js/main.js"></script>
+<script src="js/thread.js"></script>
 <script src="js/intro.js"></script>
 </body>
 </html>
