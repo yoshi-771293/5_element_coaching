@@ -318,10 +318,11 @@
       scene3.add(points);
 
       // ---- Phoenix-Silhouette aus dem echten Logo sampeln ----
-      // Damit der Ember-Burst nicht nur wahllos auseinanderfliegt, sondern
-      // sich sichtbar zu einem Phoenix formt, bevor das scharfe PNG-Logo
-      // darüber einblendet.
-      var phoenixTargets = null;
+      // Normalisierte Koordinaten (Aspekt bleibt erhalten); die Welt-Skala
+      // wird erst im burst() aus dem tatsächlichen DOM-Rechteck des
+      // Intro-Logos berechnet, damit Partikel-Phönix und Logo am Ende
+      // pixelgenau deckungsgleich sind.
+      var phoenixShape = null;
       (function preparePhoenixSilhouette() {
         var img = new Image();
         img.onload = function () {
@@ -348,18 +349,41 @@
               }
             }
           }
-          phoenixTargets = pts;
+          phoenixShape = { pts: pts, aspect: ch / cw };
         };
         img.src = 'assets/img/phoenix-emblem.png';
       })();
+
+      // Während des Intro-Bursts wird die Maus-Parallaxe der Kamera
+      // eingefroren, sonst verschiebt sie die Silhouette gegen das Logo.
+      var parallaxLocked = false;
 
       function easeOutCubic(x) { return 1 - Math.pow(1 - x, 3); }
 
       window.__phoenixDust = {
         burst: function () {
-          var hasShape = phoenixTargets && phoenixTargets.length >= 90;
-          var burstCount = hasShape ? Math.min(Math.floor(phoenixTargets.length / 3), 900) : 140;
-          var stride = hasShape ? Math.max(1, Math.floor((phoenixTargets.length / 3) / burstCount)) : 1;
+          var hasShape = phoenixShape && phoenixShape.pts.length >= 60;
+          var shapePointCount = hasShape ? Math.floor(phoenixShape.pts.length / 2) : 0;
+          var burstCount = hasShape ? Math.min(shapePointCount, 900) : 140;
+          var stride = hasShape ? Math.max(1, Math.floor(shapePointCount / burstCount)) : 1;
+
+          // Welt-Skala & -Position exakt aus dem DOM-Rechteck des Intro-Logos
+          // ableiten, damit Silhouette und Logo deckungsgleich sind.
+          var scaleS = 3.4, centerX = 0, centerY = 0, aspect = 1.19;
+          var logoEl = document.getElementById('introLogo');
+          if (logoEl) {
+            var rect = logoEl.getBoundingClientRect();
+            if (rect.width > 0) {
+              var worldH = 2 * Math.tan(Math.PI / 6) * camera.position.z; // fov 60°
+              var worldPerPx = worldH / window.innerHeight;
+              scaleS = rect.width * worldPerPx;
+              centerX = (rect.left + rect.width / 2 - window.innerWidth / 2) * worldPerPx;
+              centerY = (window.innerHeight / 2 - (rect.top + rect.height / 2)) * worldPerPx;
+            }
+          }
+          if (hasShape) aspect = phoenixShape.aspect;
+
+          parallaxLocked = true;
 
           var startPositions = new Float32Array(burstCount * 3);
           var endPositions = new Float32Array(burstCount * 3);
@@ -374,10 +398,10 @@
             startPositions[b * 3 + 2] = (Math.random() - 0.5) * 2.5;
 
             if (hasShape) {
-              var si = (b * stride) * 3;
-              endPositions[b * 3] = phoenixTargets[si];
-              endPositions[b * 3 + 1] = phoenixTargets[si + 1];
-              endPositions[b * 3 + 2] = phoenixTargets[si + 2];
+              var si = (b * stride) * 2;
+              endPositions[b * 3] = centerX + phoenixShape.pts[si] * scaleS;
+              endPositions[b * 3 + 1] = centerY + phoenixShape.pts[si + 1] * scaleS * aspect;
+              endPositions[b * 3 + 2] = (Math.random() - 0.5) * 0.3;
             } else {
               // Fallback, falls das Logo-Bild noch nicht geladen ist: klassischer Funkenburst
               var a2 = Math.random() * Math.PI * 2;
@@ -435,6 +459,17 @@
           var sparkPoints = new THREE.Points(sparkGeo, sparkMat);
           scene3.add(sparkPoints);
 
+          // Pro-Partikel-Drift für die Melt-Phase: leichtes, unterschiedlich
+          // schnelles Herabsinken + seitliches Zittern, damit die Glut
+          // organisch "wegschmilzt" statt gleichförmig zu verschwinden.
+          var meltDrift = new Float32Array(burstCount * 2);
+          var meltDelay = new Float32Array(burstCount);
+          for (var m = 0; m < burstCount; m++) {
+            meltDrift[m * 2] = (Math.random() - 0.5) * 0.6;   // x-Zittern
+            meltDrift[m * 2 + 1] = 0.5 + Math.random() * 1.6; // Sink-Distanz
+            meltDelay[m] = Math.random() * 0.28;              // gestaffelter Melt-Start
+          }
+
           var start = null;
           var duration = hasShape ? 1750 : 1000;
           var assembleBy = 0.5;   // Anteil der Zeit, bis die Form steht — schneller Einstieg
@@ -447,14 +482,15 @@
             var elapsed = now - start;
             var t = Math.min(elapsed / duration, 1);
             var formT = easeOutCubic(Math.min(t / assembleBy, 1));
-            var riseT = t > assembleBy ? (t - assembleBy) / (1 - assembleBy) : 0;
-            var rise = riseT * riseAmount;
 
             var pos = burstGeo.attributes.position.array;
             for (var b = 0; b < burstCount; b++) {
-              pos[b * 3] = startPositions[b * 3] + (endPositions[b * 3] - startPositions[b * 3]) * formT;
-              pos[b * 3 + 1] = startPositions[b * 3 + 1] + (endPositions[b * 3 + 1] - startPositions[b * 3 + 1]) * formT + rise;
-              pos[b * 3 + 2] = startPositions[b * 3 + 2] + (endPositions[b * 3 + 2] - startPositions[b * 3 + 2]) * formT;
+              var tx = endPositions[b * 3];
+              var ty = endPositions[b * 3 + 1];
+              var tz = endPositions[b * 3 + 2];
+              pos[b * 3] = startPositions[b * 3] + (tx - startPositions[b * 3]) * formT;
+              pos[b * 3 + 1] = startPositions[b * 3 + 1] + (ty - startPositions[b * 3 + 1]) * formT;
+              pos[b * 3 + 2] = startPositions[b * 3 + 2] + (tz - startPositions[b * 3 + 2]) * formT;
             }
             burstGeo.attributes.position.needsUpdate = true;
 
@@ -477,7 +513,6 @@
             }
             op = Math.max(0, Math.min(1, op));
             burstMat.opacity = op * (hasShape ? 0.95 : 1);
-            // Funken verglühen etwas früher als die Silhouette
             var sparkOp = t < 0.08 ? t / 0.08 : 1 - easeOutCubic(Math.max(0, (t - 0.08) / 0.8));
             sparkMat.opacity = Math.max(0, Math.min(1, sparkOp)) * 0.9;
 
@@ -513,8 +548,12 @@
         }
         geo.attributes.position.needsUpdate = true;
         points.rotation.y += 0.0004;
-        camera.position.x += (mouseX * 0.8 - camera.position.x) * 0.02;
-        camera.position.y += (-mouseY * 0.5 - camera.position.y) * 0.02;
+        // Während des Intro-Bursts Kamera mittig halten, damit die
+        // Partikel-Silhouette deckungsgleich mit dem Logo bleibt.
+        var targetX = parallaxLocked ? 0 : mouseX * 0.8;
+        var targetY = parallaxLocked ? 0 : -mouseY * 0.5;
+        camera.position.x += (targetX - camera.position.x) * (parallaxLocked ? 0.08 : 0.02);
+        camera.position.y += (targetY - camera.position.y) * (parallaxLocked ? 0.08 : 0.02);
         camera.lookAt(scene3.position);
         renderer.render(scene3, camera);
       })();
