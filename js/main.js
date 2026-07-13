@@ -315,7 +315,7 @@
       (function preparePhoenixSilhouette() {
         var img = new Image();
         img.onload = function () {
-          var cw = 110;
+          var cw = 150;
           var ch = Math.round(cw * img.naturalHeight / img.naturalWidth);
           var sampleCanvas = document.createElement('canvas');
           sampleCanvas.width = cw;
@@ -323,18 +323,17 @@
           var sctx = sampleCanvas.getContext('2d');
           sctx.drawImage(img, 0, 0, cw, ch);
           var data = sctx.getImageData(0, 0, cw, ch).data;
+          // WICHTIG: genau 2 Werte pro Punkt, normalisiert auf ±0.5 —
+          // burst() liest die Liste paarweise und skaliert sie über das
+          // DOM-Rechteck des Intro-Logos in Weltkoordinaten. (Eine frühere
+          // Version speicherte 3 Werte inkl. Vorab-Skalierung; das paarweise
+          // Lesen geriet dadurch aus dem Takt und die halbe Silhouette
+          // bestand aus Zufallskoordinaten — der Phönix wurde nie sauber.)
           var pts = [];
           for (var y = 0; y < ch; y += 2) {
             for (var x = 0; x < cw; x += 2) {
               if (data[(y * cw + x) * 4 + 3] > 120) {
-                // Zentriert auf (0,0) — deckungsgleich mit dem flex-zentrierten
-                // #introLogo, damit Glut-Silhouette und scharfes PNG exakt
-                // aufeinander ausgerichtet sind, statt versetzt zu wirken.
-                pts.push(
-                  (x / cw - 0.5) * 6.6,
-                  (0.5 - y / ch) * 6.6,
-                  (Math.random() - 0.5) * 0.5
-                );
+                pts.push(x / cw - 0.5, 0.5 - y / ch);
               }
             }
           }
@@ -353,7 +352,8 @@
         burst: function () {
           var hasShape = phoenixShape && phoenixShape.pts.length >= 60;
           var shapePointCount = hasShape ? Math.floor(phoenixShape.pts.length / 2) : 0;
-          var burstCount = hasShape ? Math.min(shapePointCount, 900) : 140;
+          // Doppelt so viele Glut-Partikel wie zuvor — dichte, lebendige Glut.
+          var burstCount = hasShape ? Math.min(shapePointCount, 1800) : 280;
           var stride = hasShape ? Math.max(1, Math.floor(shapePointCount / burstCount)) : 1;
 
           // Welt-Skala & -Position exakt aus dem DOM-Rechteck des Intro-Logos
@@ -383,13 +383,26 @@
           var endPositions = new Float32Array(burstCount * 3);
           var burstPositions = new Float32Array(burstCount * 3);
 
+          // Chaos-Parameter pro Partikel: die Glut wirbelt auf dem Weg zur
+          // Silhouette wild umher und beruhigt sich erst, wenn die Form steht.
+          var chaosAmp = new Float32Array(burstCount * 2);
+          var chaosFreq = new Float32Array(burstCount * 2);
+          var chaosPhase = new Float32Array(burstCount * 2);
+
           for (var b = 0; b < burstCount; b++) {
-            // Startpunkt: lose Asche/Glut, die von unten aufsteigt
+            // Startpunkt: lose Asche/Glut, weit gestreut, von unten aufsteigend
             var angle = Math.random() * Math.PI * 2;
-            var radius = 1.2 + Math.random() * 3.5;
+            var radius = 1.2 + Math.random() * 5;
             startPositions[b * 3] = Math.cos(angle) * radius;
-            startPositions[b * 3 + 1] = -3.5 - Math.random() * 2.5;
-            startPositions[b * 3 + 2] = (Math.random() - 0.5) * 2.5;
+            startPositions[b * 3 + 1] = -3.5 - Math.random() * 3.5;
+            startPositions[b * 3 + 2] = (Math.random() - 0.5) * 3;
+
+            chaosAmp[b * 2] = 0.5 + Math.random() * 1.4;
+            chaosAmp[b * 2 + 1] = 0.4 + Math.random() * 1.1;
+            chaosFreq[b * 2] = 2 + Math.random() * 4.5;
+            chaosFreq[b * 2 + 1] = 2 + Math.random() * 4.5;
+            chaosPhase[b * 2] = Math.random() * Math.PI * 2;
+            chaosPhase[b * 2 + 1] = Math.random() * Math.PI * 2;
 
             if (hasShape) {
               var si = (b * stride) * 2;
@@ -413,7 +426,9 @@
           var burstGeo = new THREE.BufferGeometry();
           burstGeo.setAttribute('position', new THREE.BufferAttribute(burstPositions, 3));
           var burstMat = new THREE.PointsMaterial({
-            size: hasShape ? 0.12 : 0.22,
+            // Bei doppelter Partikelzahl etwas kleinere Punkte; additives
+            // Blending lässt überlappende Glut sauber aufleuchten statt matschen.
+            size: hasShape ? 0.11 : 0.2,
             map: tex,
             transparent: true,
             opacity: 0,
@@ -426,7 +441,7 @@
 
           // ---- Freie Glutfunken: steigen neben der Silhouette auf und
           //      verglühen — der "Funkenregen" um die Geburt herum ----
-          var sparkCount = 260;
+          var sparkCount = 520;
           var sparkPositions = new Float32Array(sparkCount * 3);
           var sparkVel = new Float32Array(sparkCount * 3);
           var sparkPhase = new Float32Array(sparkCount);
@@ -465,30 +480,42 @@
           }
 
           var start = null;
-          var duration = hasShape ? 1750 : 1000;
-          var assembleBy = 0.5;   // Anteil der Zeit, bis die Form steht — schneller Einstieg
-          var fadeFrom = 0.66;    // langer, sanfter Ausklang: die Glut löst sich auf,
-                                   // während darüber das scharfe Logo einblendet ("melt into")
-          var riseAmount = 0.4;   // sanfter Aufstieg der fertigen Silhouette
+          var duration = hasShape ? 2600 : 1400;
+          var assembleBy = 0.42;  // Form steht nach ~1,1s
+          var meltFrom = 0.58;    // ab hier schmilzt die Glut weg,
+                                   // während darüber das scharfe Logo einblendet
 
           (function animateBurst(now) {
             if (!start) start = now;
             var elapsed = now - start;
             var t = Math.min(elapsed / duration, 1);
             var formT = easeOutCubic(Math.min(t / assembleBy, 1));
+            var meltT = t > meltFrom ? (t - meltFrom) / (1 - meltFrom) : 0;
+            var tSec = elapsed / 1000;
+            // Chaos-Anteil: wild am Anfang, klingt quadratisch aus, sobald
+            // die Silhouette sich formt — die Glut "findet" ihren Platz.
+            var wild = (1 - formT) * (1 - formT);
 
             var pos = burstGeo.attributes.position.array;
             for (var b = 0; b < burstCount; b++) {
               var tx = endPositions[b * 3];
               var ty = endPositions[b * 3 + 1];
               var tz = endPositions[b * 3 + 2];
-              pos[b * 3] = startPositions[b * 3] + (tx - startPositions[b * 3]) * formT;
-              pos[b * 3 + 1] = startPositions[b * 3 + 1] + (ty - startPositions[b * 3 + 1]) * formT;
+              // Melt: jeder Glutpunkt sinkt zeitversetzt weg und verglüht
+              var mp = 0;
+              if (meltT > 0) {
+                mp = easeOutCubic(Math.max(0, Math.min(1, (meltT - meltDelay[b]) / Math.max(0.001, 1 - meltDelay[b]))));
+              }
+              pos[b * 3] = startPositions[b * 3] + (tx - startPositions[b * 3]) * formT
+                + Math.sin(tSec * chaosFreq[b * 2] + chaosPhase[b * 2]) * chaosAmp[b * 2] * wild
+                + meltDrift[b * 2] * mp;
+              pos[b * 3 + 1] = startPositions[b * 3 + 1] + (ty - startPositions[b * 3 + 1]) * formT
+                + Math.cos(tSec * chaosFreq[b * 2 + 1] + chaosPhase[b * 2 + 1]) * chaosAmp[b * 2 + 1] * wild
+                - meltDrift[b * 2 + 1] * mp;
               pos[b * 3 + 2] = startPositions[b * 3 + 2] + (tz - startPositions[b * 3 + 2]) * formT;
             }
             burstGeo.attributes.position.needsUpdate = true;
 
-            var tSec = elapsed / 1000;
             var spos = sparkGeo.attributes.position.array;
             for (var s2 = 0; s2 < sparkCount; s2++) {
               spos[s2 * 3] = sparkPositions[s2 * 3] + sparkVel[s2 * 3] * tSec + Math.sin(tSec * 3 + sparkPhase[s2]) * 0.14;
@@ -497,22 +524,26 @@
             }
             sparkGeo.attributes.position.needsUpdate = true;
 
+            // Glut: einblenden -> halten -> beim Melt verglühen
             var op;
-            if (t < 0.12) {
-              op = t / 0.12;
-            } else if (t < fadeFrom) {
+            if (t < 0.1) {
+              op = t / 0.1;
+            } else if (t < meltFrom) {
               op = 1;
             } else {
-              op = 1 - (t - fadeFrom) / (1 - fadeFrom);
+              op = 1 - meltT;
             }
             op = Math.max(0, Math.min(1, op));
-            burstMat.opacity = op * (hasShape ? 0.95 : 1);
+            burstMat.opacity = op * 0.9;
+            // Punkte schrumpfen leicht, während sie wegschmelzen
+            burstMat.size = (hasShape ? 0.11 : 0.2) * (1 - meltT * 0.45);
             var sparkOp = t < 0.08 ? t / 0.08 : 1 - easeOutCubic(Math.max(0, (t - 0.08) / 0.8));
             sparkMat.opacity = Math.max(0, Math.min(1, sparkOp)) * 0.9;
 
             if (t < 1) {
               requestAnimationFrame(animateBurst);
             } else {
+              parallaxLocked = false;
               scene3.remove(burstPoints);
               burstGeo.dispose();
               burstMat.dispose();
