@@ -701,6 +701,9 @@ body.elemental { background: var(--obsidian); }
 /* ---------- World / Statue heroes ---------- */
 .scene--world .scene__content,
 .scene--statue .scene__content { display: flex; align-items: center; justify-content: center; }
+/* Eyebrow über der Headline stapeln (statt nebeneinander in einer Zeile,
+   was auf Mobile überlappte). */
+.scene--world .scene__content { flex-direction: column; gap: clamp(1rem, 2.5vw, 1.7rem); }
 .scene--statue .scene__content { justify-content: flex-end; }
 .scene--statue .scene__content > div, .scene--statue .scene__content { flex-direction: column; gap: 1.4rem; }
 .scene--statue .subline { text-shadow: 0 2px 14px rgba(0,0,0,0.6); }
@@ -863,6 +866,7 @@ body.elemental { background: var(--obsidian); }
 .site-header__logo {
   pointer-events: auto;
   display: flex; align-items: center;
+  position: relative; z-index: 160;   /* über dem mobilen Nav-Overlay (z 140) */
   opacity: 0.92;
   transition: opacity 0.3s ease;
 }
@@ -893,6 +897,7 @@ body.elemental { background: var(--obsidian); }
 .site-nav__toggle {
   display: none;
   pointer-events: auto;
+  position: relative; z-index: 160;   /* Schließen-Kreuz bleibt über dem Overlay sichtbar */
   flex-direction: column; justify-content: center; align-items: center; gap: 5px;
   width: 40px; height: 36px;
   background: transparent; border: none; cursor: pointer;
@@ -917,6 +922,15 @@ body.elemental { background: var(--obsidian); }
   }
   .site-nav.is-open { opacity: 1; visibility: visible; pointer-events: auto; }
   .site-nav__link { font-size: 1.1rem; opacity: 0.85; }
+}
+
+/* ---------- Kleine Screens: Headlines skalieren, damit lange Einzelwörter
+   (z. B. „Schöpferkraft") nicht über den rechten Rand hinauslaufen. ---------- */
+@media (max-width: 560px) {
+  .headline { font-size: clamp(1.95rem, 8.8vw, 3.2rem); letter-spacing: 0.03em; }
+  .headline, .subline, .statement, .statement-soft, .eyebrow, .gateway__verb {
+    overflow-wrap: break-word; hyphens: auto;
+  }
 }
 
 /* ---------- Simple single-screen pages (contact/waitlist/booking/gateway1) ---------- */
