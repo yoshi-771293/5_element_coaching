@@ -95,6 +95,20 @@
     });
   }
 
-  // Safety net: never trap a visitor behind the intro.
-  setTimeout(finish, 4800);
+  // Safety net: never trap a visitor behind the intro — ABER er muss die
+  // komplette Reveal-Sequenz überdauern. Diese endet bis zu ~2,1s NACH dem
+  // Video (Logo erscheint erst kurz vor Schluss). Der alte feste Wert von
+  // 4800ms feuerte mitten im Ember-Burst des 6s-Flammenvideos und schnitt die
+  // Phönix-Enthüllung jedes Mal ab. Jetzt aus der echten Videodauer abgeleitet.
+  function armSafetyNet() {
+    var secs = (video && video.duration && !isNaN(video.duration)) ? video.duration : 6;
+    setTimeout(finish, secs * 1000 + 3000);
+  }
+  if (video && (!video.duration || isNaN(video.duration))) {
+    video.addEventListener('loadedmetadata', armSafetyNet);
+  } else {
+    armSafetyNet();
+  }
+  // Absolute letzte Reißleine, falls das Video gar nicht lädt oder hängt.
+  setTimeout(finish, 12000);
 })();

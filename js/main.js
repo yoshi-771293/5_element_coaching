@@ -365,7 +365,12 @@
             if (rect.width > 0) {
               var worldH = 2 * Math.tan(Math.PI / 6) * camera.position.z; // fov 60°
               var worldPerPx = worldH / window.innerHeight;
-              scaleS = rect.width * worldPerPx;
+              // Das Logo startet mit transform: scale(0.94) — getBoundingClientRect
+              // liefert dadurch eine um 6% zu kleine Breite. offsetWidth ist die
+              // untransformierte Layout-Breite (= finale scale(1)-Größe), damit die
+              // Glut-Silhouette exakt auf das fertige Logo passt. Der Mittelpunkt
+              // bleibt unter zentrischer Skalierung invariant, kommt also aus rect.
+              scaleS = (logoEl.offsetWidth || rect.width) * worldPerPx;
               centerX = (rect.left + rect.width / 2 - window.innerWidth / 2) * worldPerPx;
               centerY = (window.innerHeight / 2 - (rect.top + rect.height / 2)) * worldPerPx;
             }
